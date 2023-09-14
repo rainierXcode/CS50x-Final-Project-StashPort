@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/style.css" />
+    <script src="/static/script.js" defer></script>
+    <title>Sign Up</title>
+  </head>
+  <body>
+    <main class="login-signup-container">
+      <div class="left_image">
+        <img
+          src="{{ url_for('static', filename='images/login&signup.svg')}}"
+          alt="login&signupImage"
+          id="stash-port-img"
+        />
+      </div>
+
+      <div class="login-sigup-form signup-form">
+        <div class="login-signup-box">
+          <div id="stash-port-title">Let's Get Started</div>
+
+          <form action="" id="sign-form">
+            <div class="name-user-box">
+              <div class="fname">
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  name="fname"
+                  autocomplete="off"
+                  autofocus
+                  id="fname"
+                />
+              </div>
+              <div class="lname">
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  name="lname"
+                  autocomplete="off"
+                  autofocus
+                  id="lname"
+                />
+              </div>
+            </div>
+            <div class="username-signup">
+              <input
+                type="text"
+                placeholder="Username"
+                name="username-signup"
+                autocomplete="off"
+                autofocus
+                id="user-signup"
+              />
+            </div>
+            <div class="password-signup">
+              <input
+                type="password"
+                placeholder="Password"
+                name="password-signup"
+                autocomplete="off"
+                autofocus
+                id="password-signup"
+              />
+            </div>
+            <div class="confirm-password-signup">
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                name="confirm-password-signup"
+                autocomplete="off"
+                autofocus
+                id="confirm-password-signup"
+              />
+            </div>
+            <div class="button-signup">
+              <button type="submit">Sign Up</button>
+            </div>
+          </form>
+          <div class="others-signup">
+            <div>Already have an Account? <a href="/login">Sign In</a></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

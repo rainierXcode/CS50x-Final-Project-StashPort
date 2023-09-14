@@ -46,12 +46,11 @@ body{
     color: #000;
     font-family: 'Teko', sans-serif;
     font-size: 3rem;
-    margin-bottom: 10px;
 }
 
 .login-signup-box input{
     box-sizing: border-box;
-    border-radius: 20px;
+    border-radius: 13px;
     padding: 10px;
     background-color: #D3D3D3;
     border: 1px solid #D3D3D3;
@@ -59,24 +58,35 @@ body{
     
 }
 
-.email, .password, .button button{
-    margin-bottom: 15px;
+
+.username, .password, .button button{
+    margin-bottom: 10px;
 }
 
-.button{
+.name-user-box, .username-signup, .password-signup, .confirm-password-signup{
+    margin-bottom: 10px;
+}
+
+.signup-form input{
+    border-radius: 10px;
+}
+
+
+.button, .button-signup{
     display: flex;
     justify-content: center;
 }
 
-.button button{
-    padding: 10px;
-    border-radius: 15px;
-    width: 30%;
+.button button, .button-signup button{
+    padding: 7px;
+    border-radius: 12px;
+    width: 40%;
     border: 2px solid  #D3D3D3;
     background: linear-gradient(to bottom, #27E1EE, #EE00F5);
     color: white;
     font-weight: 600;
-    font-family: 'Times New Roman', Times, serif
+    font-family: 'Times New Roman', Times, serif;
+    margin-bottom: 10px;
 }
 
 .others{
@@ -85,7 +95,13 @@ body{
     font-size: .9rem;
 }
 
-.others a{
+.others-signup{
+    display: flex;
+    justify-content: center;
+    font-size: .9rem;
+}
+
+.others a, .others-signup a{
     text-decoration: none;
 }
 
@@ -93,6 +109,11 @@ body{
     color: cyan;
 }
 
+.name-user-box{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
 
 
 @media (max-width: 768px) {

@@ -10,7 +10,7 @@
     <main class="login-signup-container">
       <div class="left_image">
         <img
-          src="images/login&signup.svg"
+          src="{{ url_for('static', filename='images/login&signup.svg')}}"
           alt="login&signupImage"
           id="stash-port-img"
         />
@@ -21,14 +21,14 @@
           <div id="stash-port-title">StashPort</div>
 
           <form action="">
-            <div class="email">
+            <div class="username">
               <input
-                type="email"
-                placeholder="Email"
-                name="email"
+                type="text"
+                placeholder="Username"
+                name="username"
                 autocomplete="off"
                 autofocus
-                id="email"
+                id="username"
               />
             </div>
             <div class="password">
@@ -46,7 +46,7 @@
             </div>
           </form>
           <div class="others">
-            <div>No Account? <a href="">Sign Up</a></div>
+            <div>No Account? <a href="/signup">Sign Up</a></div>
             <div><a href="">Forgot password?</a></div>
           </div>
         </div>
