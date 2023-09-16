@@ -116,6 +116,15 @@ body{
 }
 
 
+.login-username-helper, .login-password-helper{
+    /* display: none; */
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color: red;
+    font-size: .8rem;
+}
+
+
 @media (max-width: 768px) {
     .left_image{
         display: none;

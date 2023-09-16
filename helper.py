@@ -1,0 +1,2 @@
+def errorHandling():
+    return "Error"

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../static/style.css" />
+    <script src="/static/login.js" defer></script>
     <title>Login</title>
   </head>
   <body>
@@ -20,7 +21,7 @@
         <div class="login-signup-box">
           <div id="stash-port-title">StashPort</div>
 
-          <form action="">
+          <form action="/" method="POST">
             <div class="username">
               <input
                 type="text"
@@ -31,6 +32,10 @@
                 id="username"
               />
             </div>
+            {% if username_error %}
+            <div class="login-username-helper">{{username_error}}</div>
+            {% endif %}
+
             <div class="password">
               <input
                 type="password"
@@ -41,8 +46,11 @@
                 id="password"
               />
             </div>
+            {% if password_error %}
+            <div class="login-username-helper">{{password_error}}</div>
+            {% endif %}
             <div class="button">
-              <button type="submit">Sign In</button>
+              <button type="submit" id="login-button">Sign In</button>
             </div>
           </form>
           <div class="others">
