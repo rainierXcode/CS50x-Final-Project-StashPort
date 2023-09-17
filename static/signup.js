@@ -1,19 +1,35 @@
-const signUpForm = document.getElementById("sign-up-button");
-const conPass = document.getElementById("confirm-password-signup");
+const fname = document.getElementById("fname");
+const fnameHelper = document.querySelector(".signup-fname-helper");
 
-signUpForm.addEventListener('click', (event) => {
-    const pass = document.getElementById("password-signup").value;
+const lname = document.getElementById("lname");
+const lnameHelper = document.querySelector(".signup-lname-helper");
 
-    if (pass !== conPass.value) {
-        event.preventDefault(); 
-        conPass.placeholder = "Password Doesn't Match";
-        conPass.value = ""; 
-    }
-    alert("h");
+const username = document.getElementById("username-signup");
+const usernameHelper = document.querySelector(".signup-username-helper");
+
+const password = document.getElementById("password-signup");
+const passwordHelper = document.querySelector(".signup-password-helper");
+
+const confirm_password = document.getElementById("confirm-password-signup");
+const confirm_passwordHelper = document.querySelector(".signup-confirm_password-helper");
+
+fname.addEventListener("input", ()=>{
+    fnameHelper.style.display = "none";
 });
 
-conPass.addEventListener('focus', () => {
-    conPass.placeholder = "Confirm Password";
+lname.addEventListener("input", ()=>{
+    lnameHelper.style.display = "none";
 });
 
+username.addEventListener("input", ()=>{
+    usernameHelper.style.display = "none";
+});
+
+password.addEventListener("input", ()=>{
+    passwordHelper.style.display = "none";
+});
+
+confirm_password.addEventListener("input", ()=>{
+    confirm_passwordHelper.style.display = "none";
+});
 

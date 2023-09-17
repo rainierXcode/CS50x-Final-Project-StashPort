@@ -21,7 +21,7 @@
         <div class="login-signup-box">
           <div id="stash-port-title">Let's Get Started</div>
 
-          <form action="" id="sign-form">
+          <form action="/signup" id="sign-form" method="POST">
             <div class="name-user-box">
               <div class="fname">
                 <input
@@ -44,6 +44,17 @@
                 />
               </div>
             </div>
+            {% if fname_error and lname_error %}
+            <div class="signup-name-error">
+              <div class="signup-fname-helper">{{ fname_error }}</div>
+              <div class="signup-lname-helper">{{ lname_error }}</div>
+            </div>
+            {% elif fname_error %}
+            <div class="signup-fname-helper">{{ fname_error }}</div>
+            {% elif lname_error %}
+            <div class="signup-lname-helper">{{ lname_error }}</div>
+            {% endif %}
+
             <div class="username-signup">
               <input
                 type="text"
@@ -51,9 +62,12 @@
                 name="username-signup"
                 autocomplete="off"
                 autofocus
-                id="user-signup"
+                id="username-signup"
               />
             </div>
+            {% if username_error %}
+            <div class="signup-username-helper">{{ username_error }}</div>
+            {% endif %}
             <div class="password-signup">
               <input
                 type="password"
@@ -64,6 +78,9 @@
                 id="password-signup"
               />
             </div>
+            {% if password_error %}
+            <div class="signup-password-helper">{{ password_error }}</div>
+            {% endif %}
             <div class="confirm-password-signup">
               <input
                 type="password"
@@ -74,6 +91,10 @@
                 id="confirm-password-signup"
               />
             </div>
+
+            {% if confirm_pass_error %}
+            <div class="signup-confirm_password-helper">{{ confirm_pass_error }}</div>
+            {% endif %}
             <div class="button-signup">
               <button type="submit" id="sign-up-button">Sign Up</button>
             </div>

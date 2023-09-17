@@ -30,6 +30,7 @@
                 autocomplete="off"
                 autofocus
                 id="username"
+                value = "{{ username_value }}"
               />
             </div>
             {% if username_error %}
@@ -38,16 +39,18 @@
 
             <div class="password">
               <input
-                type="password"
-                placeholder="Password"
-                name="password"
-                autocomplete="off"
-                autofocus
-                id="password"
+                  type="password"
+                  placeholder="Password"
+                  name="password"
+                  autocomplete="off"
+                  autofocus
+                  id="password"
+                  value="{{ password_value }}"
               />
-            </div>
+          </div>
+          
             {% if password_error %}
-            <div class="login-username-helper">{{password_error}}</div>
+            <div class="login-password-helper">{{password_error}}</div>
             {% endif %}
             <div class="button">
               <button type="submit" id="login-button">Sign In</button>

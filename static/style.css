@@ -116,12 +116,16 @@ body{
 }
 
 
-.login-username-helper, .login-password-helper{
-    /* display: none; */
+.login-username-helper, .login-password-helper, .signup-fname-helper, .signup-lname-helper, .signup-username-helper, .signup-password-helper, .signup-confirm_password-helper{
     margin-top: 5px;
     margin-bottom: 5px;
     color: red;
     font-size: .8rem;
+}
+
+.signup-name-error{
+    display: flex;
+    justify-content: space-between;
 }
 
 
