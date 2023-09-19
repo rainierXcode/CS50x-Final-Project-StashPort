@@ -12,6 +12,12 @@ body{
     background-color:  #040F16;;
 }
 
+a{
+    text-decoration: none;
+    color: #000;
+}
+
+
 .login-signup-container{
     display: grid;
     grid-template-columns: 1fr 3fr;
@@ -231,21 +237,33 @@ body{
 
 .dashboard-box{
     margin-bottom: 15px;
+    background-color: #F7ECE1;
+    border: none;
 }
 
 .logout-box{
     position: absolute;
     bottom: 20px;
-}
-
-.dashboard{
-    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
     align-items: center;
 }
+
+
 
 .icon-dash{
     display: flex;
     align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.icon-dashboard{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-sizing: border-box;
 }
 
 #dashboard-text{
@@ -261,16 +279,52 @@ body{
 .dash-text{
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 700;
+    display: flex;
+    align-items: flex-start;
 }
+
 
 
 .material-symbols-outlined {
   font-variation-settings:
-  'FILL' 1,
+  'FILL' 0,
   'wght' 300,
   'GRAD' 1,
-  'opsz' 24
+  'opsz' 50
+  
 }
+
+.other-dash-icon{
+    font-size: 20px;
+}
+
+#dashboard-text.hide, .dash-text.hide{
+    display: none;
+}
+
+.body-container.hide{
+    grid-template-rows: 1fr 6fr;
+    grid-template-columns: 1fr 25fr;
+}
+
+.sidebar.hide {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
+    padding: 20px 5px 20px 5px;
+    position: relative;
+}
+
+.dashboard-icon.hide  {
+    font-size: 25px;
+}
+
+.logout-box.hide{
+    position:  static;
+}
+
+
 
 @media (max-width: 768px) {
     .left_image{
@@ -303,6 +357,8 @@ body{
     
     }
   }
+
+
 
   @media (max-width: 600px) {
     .login-signup-box{
