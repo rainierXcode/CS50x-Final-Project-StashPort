@@ -31,6 +31,7 @@
                   autocomplete="off"
                   autofocus
                   id="fname"
+                  value = "{{ fname_value }}"
                 />
               </div>
               <div class="lname">
@@ -41,6 +42,7 @@
                   autocomplete="off"
                   autofocus
                   id="lname"
+                  value = "{{ lname_value }}"
                 />
               </div>
             </div>
@@ -63,6 +65,7 @@
                 autocomplete="off"
                 autofocus
                 id="username-signup"
+                value = "{{ username_value }}"
               />
             </div>
             {% if username_error %}
@@ -76,6 +79,7 @@
                 autocomplete="off"
                 autofocus
                 id="password-signup"
+                value = "{{ password_value }}"
               />
             </div>
             {% if password_error %}
@@ -89,6 +93,7 @@
                 autocomplete="off"
                 autofocus
                 id="confirm-password-signup"
+                value = "{{ confirm_password_value }}"
               />
             </div>
 

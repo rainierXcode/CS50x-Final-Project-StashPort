@@ -140,7 +140,7 @@ a{
 .body-container{
     height: 100vh;
     display: grid;
-    grid-template-rows: 1fr 6fr;
+    grid-template-rows: min-content 1fr;
     grid-template-columns: 1fr 6fr;
 }
 
@@ -148,16 +148,17 @@ a{
     grid-row-start: 1;
     grid-row-end: 2;
     grid-column-start: 2;
-    grid-row-end: 3;
+    grid-column-end: 3;
     background-color: white;
     padding: 10px 20px 10px 20px;
+    box-sizing: content-box;
 }
 
 .article{
     grid-row-start: 2;
     grid-row-end: 3;
     grid-column-start: 2;
-    grid-row-end: 3;
+    grid-column-end: 3;
     background-color: #5DA9E9;
 }
 
@@ -303,7 +304,7 @@ a{
 }
 
 .body-container.hide{
-    grid-template-rows: 1fr 6fr;
+    grid-template-rows: min-content auto-fit;
     grid-template-columns: 1fr 25fr;
 }
 
@@ -320,8 +321,54 @@ a{
     font-size: 25px;
 }
 
+
+.icon-dashboard.hide{
+    animation: rotate 0.5s ease-in both;
+}
+
+.icon-dashboard{
+    animation: rotate_invert 0.5s ease-in both;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0);
+    }
+
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
+
+@keyframes rotate_invert {
+    0% {
+        transform: rotate(0);
+    }
+
+    100%{
+        transform: rotate(-360deg);
+    }
+}
+
 .logout-box.hide{
     position:  static;
+}
+
+.icon-dash.hide{
+    animation: scale 0.5s ease-in both;
+}
+
+@keyframes scale {
+    50%{
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100%{
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 
@@ -330,6 +377,8 @@ a{
     .left_image{
         display: none;
     }
+
+
 
 
     .login-signup-container{
@@ -356,6 +405,131 @@ a{
         box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
     
     }
+
+    .search{
+        width: 50%;
+    }
+
+    #dashboard-text, .dash-text{
+        display: none;
+    }
+    
+    .body-container{
+        grid-template-rows: 1fr 6fr;
+        grid-template-columns: 1fr 25fr;
+    }
+    
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        justify-content: center;
+        padding: 20px 5px 20px 5px;
+        position: relative;
+    }
+    
+    .dashboard-icon  {
+        font-size: 25px;
+    }
+    
+    .logout-box{
+        position:  static;
+    }
+
+
+    #dashboard-text.hi, .dash-text{
+        display: none;
+    }
+    
+    .body-container{
+        grid-template-rows: 1fr 6fr;
+        grid-template-columns: 1fr 25fr;
+    }
+    
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        justify-content: center;
+        padding: 20px 5px 20px 5px;
+        position: relative;
+    }
+    
+    .dashboard-icon  {
+        font-size: 25px;
+    }
+    
+    .logout-box{
+        position:  static;
+    }
+    
+    #dashboard-text.hide, .dash-text.hide{
+        display: block;
+    }
+    
+    .body-container.hide{
+        grid-template-columns: min-content autofit;
+    }
+
+    .sidebar.hide {
+    grid-row-start: 1;
+    grid-row-end: 3;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    background-color: #F7ECE1;
+    padding: 20px 20px 0px 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    position: absolute;
+    height: 98vh;
+    width: 70vw;
+    }
+
+    .dashboard-icon  {
+        font-size: 35px;
+    }
+    
+    .icon-dashboard{
+        animation: rotate 0.5s ease-in both;
+    }
+    
+    .icon-dashboard.hide{
+        animation: rotate_invert 0.5s ease-in both;
+    }
+    
+    @keyframes rotate {
+        0% {
+            transform: rotate(0);
+        }
+    
+        100%{
+            transform: rotate(360deg);
+        }
+    }
+    
+    
+    @keyframes rotate_invert {
+        0% {
+            transform: rotate(0);
+        }
+    
+        100%{
+            transform: rotate(-360deg);
+        }
+    }
+    
+  
+    .icon-dash{
+        animation: rotate 0.5s ease-in both;
+    }
+    
+    .icon-dash.hide{
+        animation: none;
+    }
+ 
+    
+  
   }
 
 
@@ -364,14 +538,71 @@ a{
     .login-signup-box{
         width: 100%;
     }
+
+    .search{
+        width: 50%;
+    }
+    .icon-dashboard{
+        animation: rotate 0.5s ease-in both;
+    }
+    
+    .icon-dashboard.hide{
+        animation: rotate_invert 0.5s ease-in both;
+    }
+    
+    @keyframes rotate {
+        0% {
+            transform: rotate(0);
+        }
+    
+        100%{
+            transform: rotate(360deg);
+        }
+    }
+    
+    
+    @keyframes rotate_invert {
+        0% {
+            transform: rotate(0);
+        }
+    
+        100%{
+            transform: rotate(-360deg);
+        }
+    }
+    
+  
+    .icon-dash{
+        animation: scale 0.5s ease-in both;
+    }
+    
+    @keyframes scale {
+        50%{
+            transform: scale(0.5);
+            opacity: 0;
+        }
+    
+        100%{
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    
+
   }
 
   @media (max-width: 1450px) {
     .login-signup-box{
         width: 70%;
     }
+
+  
+
   }
 
+  @media (min-width: 1921px){
+    
+  }
  
   
   

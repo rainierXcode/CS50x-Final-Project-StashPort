@@ -1,9 +1,14 @@
 from flask import Flask, render_template, url_for, request, redirect
 from helper import * 
+from cs50 import SQL
+from werkzeug.security import check_password_hash, generate_password_hash
+
+
 
 
 app = Flask(__name__)
 
+db = SQL("sqlite:///stashport.db")
 
 @app.route('/', methods=["GET", "POST"])
 def loginUI():
@@ -13,6 +18,7 @@ def loginUI():
     execute = None
     username_value = None
     password_value = None
+    login_success = True
     
     if request.method == "POST":
         username = request.form.get("username")
@@ -38,20 +44,23 @@ def loginUI():
         
     
         if not have_error:
-          
-            if username != "yoshito31":
+            username_exist = db.execute("SELECT * FROM users WHERE username = ?", username)
+            if  not username_exist:
                 error_message_username = "Username does not exist"
                 have_error = True
+                login_success = False
 
-            
-            elif password != "yoshito31":
+            else:
+               stored_password_hash = username_exist[0]["password"]
+               if not check_password_hash(stored_password_hash, password):
                 error_message_password = "Password is invalid"
                 have_error = True 
+                login_success = False
         
         if have_error:
             return render_template("login.html", username_error=error_message_username, password_error=error_message_password, username_value=username, password_value=password)
         
-        if username == "yoshito31" and password == "yoshito31":
+        if login_success:
             return render_template("home.html")
 
 
@@ -119,24 +128,42 @@ def signUI():
         
         
         if not have_error:
-            if username == "yoshito31":
+            username_exist = db.execute("SELECT username FROM users WHERE username = ?", username)
+            if username_exist:
                 error_message_username = "Username already exists"
                 have_error = True
             
-            if confirm_password != password:
+            elif confirm_password != password:
                 error_message_password_confirm = "Password does not match"
                 have_error = True
             
         
         if have_error:
-            return render_template("signup.html", fname_error = error_message_fName, lname_error= error_message_lName, username_error = error_message_username, password_error = error_message_password , confirm_pass_error = error_message_password_confirm)
+            return render_template("signup.html", fname_error = error_message_fName, lname_error= error_message_lName, username_error = error_message_username, password_error = error_message_password , confirm_pass_error = error_message_password_confirm,fname_value = fName, lname_value = lName, username_value = username, password_value= password, confirm_password_value = confirm_password)
+        
+        hash_pass=generate_password_hash(password);
+        db.execute("INSERT INTO users(first_name, last_name, username, password) VALUES( ?, ?, ?, ?)", fName, lName, username, hash_pass)
+        return redirect("/")
         
 
         
     return render_template("signup.html")
+
+@app.route("/home")
+@login_required
+def home():
+    return render_template("home.html")
+
+
+@app.route("/logout")
+def logout():
+    return redirect("/")
 
         
 
 
 if __name__ == '__main__':
       app.run(debug=True)
+
+
+

@@ -1,11 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link rel="stylesheet" href="../static/style.css" />
+    <script src="../static/dashboard.js" defer></script>
     <title>Home</title>
-</head>
-<body>
-    
-</body>
+  </head>
+  <body>
+    <div class="body-container">
+      <header class="header">
+        <div class="header-top">
+          <label for="search" class="material-symbols-outlined"> search </label>
+          <input type="text" class="search" id="search" />
+        </div>
+        <div class="header-down">
+          <div class="header-down-left">
+            <div>
+              <img src="../static/images/rabbit.png" alt="icon" />
+            </div>
+            <div>
+              <div id="hi-there">Hi there,</div>
+              <div id="user-name">Rainier Sapin (@rxxnier)</div>
+            </div>
+          </div>
+          <div class="header-down-right">
+            <div><button id="upload">Upload</button></div>
+          </div>
+        </div>
+      </header>
+      <aside class="sidebar">
+        <button class="dashboard-box">
+          <div class="icon-dashboard">
+            <i class="material-symbols-outlined dashboard-icon">dashboard</i>
+          </div>
+          <div id="dashboard-text">Dashboard</div>
+        </button>
+
+        <ul >
+          <a href="">
+            <li class="icon-dash">
+              <i class="material-symbols-outlined">Home</i>
+              <div class="dash-text">Home</div>
+            </li>
+          </a>
+
+          <a href="">
+            <li class="icon-dash">
+              <i class="material-symbols-outlined">account_circle</i>
+              <div class="dash-text">Profile</div>
+            </li>
+          </a>
+
+          <a href="">
+            <li class="icon-dash">
+              <i class="material-symbols-outlined">history</i>
+              <div class="dash-text">History</div>
+            </li>
+          </a>
+
+          <a href="">
+            <li class="icon-dash">
+              <i class="material-symbols-outlined">settings</i>
+              <div class="dash-text">Settings</div>
+            </li>
+          </a>
+
+          <div class="logout-box">
+            <a href="/logout">
+              <li class="icon-dash">
+                <i class="material-symbols-outlined">logout</i>
+                <div class="dash-text">Logout</div>
+              </li>
+            </a>
+          </div>
+        </ul>
+        
+      </aside>
+      <article class="article">
+      
+      </article>
+    </div>
+  </body>
 </html>
