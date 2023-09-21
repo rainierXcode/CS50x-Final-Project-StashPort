@@ -4,7 +4,6 @@ const dashboardText = document.getElementById("dashboard-text");
 const bodyContainer = document.querySelector(".body-container");
 const sidebar = document.querySelector(".sidebar");
 const dashboardIcon = document.querySelector('.dashboard-icon');
-const logoutBox = document.querySelector(".logout-box");
 const header  = document.querySelector(".header");
 const article = document.querySelector(".article");
 const iconDash = document.querySelectorAll(".icon-dash");
@@ -20,7 +19,6 @@ dashButton.addEventListener('click', () => {
     sidebar.classList.toggle('hide');
     dashButton.classList.toggle('hide');
     dashboardIcon.classList.toggle('hide');
-    logoutBox.classList.toggle('hide');
     header.classList.toggle('hide');
     article.classList.toggle('hide');
     iconDashboard.classList.toggle('hide');

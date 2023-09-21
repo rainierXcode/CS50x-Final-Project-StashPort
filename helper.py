@@ -6,7 +6,6 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
-            # User is not authenticated, redirect to the login page
-            return redirect(url_for('loginUI'))  # Replace 'login' with your login route
+            return redirect(url_for('loginUI'))  
         return f(*args, **kwargs)
     return decorated_function

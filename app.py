@@ -1,4 +1,5 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, session
+from flask_session import Session
 from helper import * 
 from cs50 import SQL
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -7,6 +8,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 db = SQL("sqlite:///stashport.db")
 
@@ -19,6 +23,9 @@ def loginUI():
     username_value = None
     password_value = None
     login_success = True
+
+    if session.get("user_id"):
+        return redirect("/home")
     
     if request.method == "POST":
         username = request.form.get("username")
@@ -61,7 +68,8 @@ def loginUI():
             return render_template("login.html", username_error=error_message_username, password_error=error_message_password, username_value=username, password_value=password)
         
         if login_success:
-            return render_template("home.html")
+            session["user_id"] = username
+            return redirect("/home")
 
 
     return render_template("login.html")
@@ -157,6 +165,7 @@ def home():
 
 @app.route("/logout")
 def logout():
+    session["user_id"] = None
     return redirect("/")
 
         
@@ -164,6 +173,3 @@ def logout():
 
 if __name__ == '__main__':
       app.run(debug=True)
-
-
-
