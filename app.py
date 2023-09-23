@@ -3,6 +3,7 @@ from flask_session import Session
 from helper import * 
 from cs50 import SQL
 from werkzeug.security import check_password_hash, generate_password_hash
+import requests
 
 
 
@@ -168,7 +169,102 @@ def logout():
     session["user_id"] = None
     return redirect("/")
 
+
+
+def link_verifier(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return True
+        else:
+            return False
+    except requests.exceptions.RequestException as e:
+        return False
+
         
+@app.route("/home/upload", methods=["GET", "POST"])
+@login_required
+def upload():
+    error_message_folder = None
+    error_message_title = None
+    error_message_link = None
+    error_message_description = None
+    error_message_tags = None
+    all_error = []
+
+
+
+    if request.method == "POST":
+        folder_choice = request.form.get("folders")
+        title = request.form.get("title")
+        link = request.form.get("link")
+        description  = request.form.get("description")
+        tags = request.form.get("tags")
+
+
+        if folder_choice == None:
+            error_message_folder = "Folder named folder is not available"
+            all_error.append(error_message_folder)
+
+
+        if title == "":
+            error_message_title = "Title cannot be empty"
+            all_error.append(error_message_title)
+
+
+        elif len(title) < 5:
+            error_message_title = "Title must be 5 characters above"
+            all_error.append(error_message_title)
+
+        if link == "":
+            error_message_link = "Link cannot be empty"
+            all_error.append(error_message_link)
+
+        elif link_verifier(link):
+            error_message_link = "Your Link is Detected Invalid"
+            all_error.append(error_message_link)
+
+        
+
+
+        if description == "":
+            error_message_description = "Description cannot be empty"
+            all_error.append(error_message_description)
+
+
+        elif len(description) < 30:
+            error_message_description = "Too short, must be 30 characters above"
+            all_error.append(error_message_description)
+
+
+        if tags == tags.endswith(","):
+            error_message_tags = "Dont end with comma"
+            all_error.append(error_message_tags)
+
+
+        if len(all_error) != 0:
+            for error in all_error:
+                print(error)
+            return render_template("upload.html", all_errors=all_error)
+        
+    username = session["user_id"]
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
+    folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ?", user_id[0]["user_id"])
+    return render_template("upload.html", folders = folders)
+
+
+
+@app.route("/home/upload/addfolder", methods=["GET", "POST"])
+@login_required
+def addFolder():
+    if request.method == "POST":
+        folder_name = request.form.get("folder_name")
+        username = session["user_id"]
+        user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
+        db.execute("INSERT INTO folders(folder_name, user_id) VALUES(?, ?)",  folder_name, user_id[0]["user_id"])
+        return redirect("/home/upload")
+    return redirect("/home/upload")
+
 
 
 if __name__ == '__main__':
