@@ -161,7 +161,8 @@ def signUI():
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html")
+    username = session["user_id"]
+    return render_template("home.html", username = username)
 
 
 @app.route("/logout")
@@ -190,7 +191,17 @@ def upload():
     error_message_link = None
     error_message_description = None
     error_message_tags = None
+    folder_value = None
+    title_value = None
+    link_value = None
+    description_value = None
+    tags_value = None
+
     all_error = []
+
+    username = session["user_id"]
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
+    folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ?", user_id[0]["user_id"])
 
 
 
@@ -205,27 +216,27 @@ def upload():
         if folder_choice == None:
             error_message_folder = "Folder named folder is not available"
             all_error.append(error_message_folder)
+            
 
 
         if title == "":
             error_message_title = "Title cannot be empty"
             all_error.append(error_message_title)
-
+         
 
         elif len(title) < 5:
             error_message_title = "Title must be 5 characters above"
             all_error.append(error_message_title)
-
+        
         if link == "":
             error_message_link = "Link cannot be empty"
             all_error.append(error_message_link)
 
-        elif link_verifier(link):
+
+        elif not link_verifier(link):
             error_message_link = "Your Link is Detected Invalid"
             all_error.append(error_message_link)
-
         
-
 
         if description == "":
             error_message_description = "Description cannot be empty"
@@ -242,15 +253,26 @@ def upload():
             all_error.append(error_message_tags)
 
 
+
         if len(all_error) != 0:
-            for error in all_error:
-                print(error)
-            return render_template("upload.html", all_errors=all_error)
+            title_value = title
+            folder_value = folder_choice
+            link_value =link
+            description_value = description
+            tags_value =tags
+
+            return render_template("upload.html", all_errors=all_error, folder_value = folder_value, title_value = title_value, link_value = link_value, description_value = description_value, tags_value = tags_value, username = username)
         
-    username = session["user_id"]
-    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
-    folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ?", user_id[0]["user_id"])
-    return render_template("upload.html", folders = folders)
+        else:
+            folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_choice, user_id[0]["user_id"])
+            db.execute("INSERT INTO links(title_name, folder_category, link_url, description, folder_id) VALUES (?, ?, ?, ?, ?)",
+           (title, folder_choice, link, description, folder_id))
+
+
+
+        
+   
+    return render_template("upload.html", folders = folders, username = username)
 
 
 

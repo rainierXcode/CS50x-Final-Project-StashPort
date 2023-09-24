@@ -1,6 +1,6 @@
 
  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Old+Permic&family=Teko&family=Vollkorn:ital@1&display=swap');
- @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=PT+Serif:ital@1&family=Roboto+Condensed&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=PT+Serif:ital@1&family=Roboto+Condensed&display=swap&family=Playfair+Display:ital,wght@1,500');
 
 
 * {
@@ -526,8 +526,8 @@ a{
     box-sizing: border-box;
     padding: 0;
     border: none;
-    height: 16px;
-    width: 16px;
+    height: 18px;
+    width: 18px;
     background-color: transparent;
     position: absolute;
     top: 2%;
@@ -535,8 +535,9 @@ a{
   }
 
   .close-folder-div button, .close-folder-div  button i{
-    height: 16px;
-    width: 16px;
+    height: 18px;
+    width: 18px;
+    font-size: 18px;
     display: flex;
   }
 
@@ -552,6 +553,17 @@ a{
     justify-content: center;
   }
 
+  @keyframes zoomIn {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+
+
   
   .add-new-folder{
     box-sizing: border-box;
@@ -565,7 +577,10 @@ a{
     align-items: center;
     top: 30%;
     left: 50%;
+    transform: translateX(-50%) scale(0);
     display: none;
+    z-index: 1000;
+    animation: zoomIn 0.5s ease-in forwards;
   }
 
   .add-new-folder div:first-child{
@@ -609,19 +624,77 @@ a{
     color: #888;
 }
 
-.all_error_post{
-    position: absolute;
-    right: 50%;
-    top: 30%;
-    background-color:  #888;
+@keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 
+.all_error_post {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    background-color: #888;
+    width: 30%;
+    padding-bottom: 20px;
+    border-radius: 5px;
+    z-index: 1000;
+    transform: translateX(-50%) ; 
+    animation: fadeIn 0.5s ease forwards;
+    opacity: 0; 
+}
+
+.all_error_post-header, .all-errors-guide{
+    padding: 0 20px 0 20px
+}
+.all-errors-guide{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto Condensed', sans-serif;
+    margin-bottom: 5px;
+}
+
+.all_error_post-header div:first-child{
+    margin-top: 5px;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    
+}
+
+
+.all_error_post-header div:nth-child(2){
+    position: absolute;
+    top: 1%;
+    right: 1%;
+    width: 20px;
+    height: 20px;
+}
+.all_error_post-header div:nth-child(2) button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: hidden;
+}
+
+.all_error_post-header div:nth-child(2) i{
+    font-size: 20px;
 }
 
 .all_error_post div:first-child{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-family: 'Playfair Display', serif;
 }
+
+
 
 @media (max-width: 768px) {
     .left_image{

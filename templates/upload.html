@@ -7,23 +7,54 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
     <script src="{{ url_for('static', filename='upload.js') }}" defer></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
     <title>Upload</title>
   </head>
   <body>
-    
     <div class="add-new-folder">
-    <form action="upload/addfolder" method="POST">
-      <div>Name Your Folder</div>
-      <div><input type="text" autofocus autocomplete="off" name="folder_name" id="folder_name_input"></div>
-      <button id="add-new-folder-button" class="disabled-button">Add New</button>
-    </form>
-     <div class="close-folder-div"><button id="close-folder-form"><i class="material-symbols-outlined">close</i></button></div>
-  </div>
+      <form action="upload/addfolder" method="POST">
+        <div>Name Your Folder</div>
+        <div>
+          <input
+            type="text"
+            autofocus
+            autocomplete="off"
+            name="folder_name"
+            id="folder_name_input"
+          />
+        </div>
+        <button id="add-new-folder-button" class="disabled-button">
+          Add New
+        </button>
+      </form>
+      <div class="close-folder-div">
+        <button id="close-folder-form">
+          <i class="material-symbols-outlined">close</i>
+        </button>
+      </div>
+    </div>
 
-
+    {% if all_errors %}
+    <div class="all_error_post">
+      <div class="all_error_post-header">
+        <div>Oops! Something went wrong</div>
+        <div>
+          <button><i class="material-symbols-outlined">close</i></button>
+        </div>
+      </div>
+      {% for error in all_errors %}
+      <div class="all-errors-guide">{{error}}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
 
     <div class="body-container">
       <header class="header">
@@ -32,13 +63,16 @@
             <label for="search" class="material-symbols-outlined">
               search
             </label>
-            <input type="text" class="search" id="search" />
+            <input type="text" class="search" id="search"  autocomplete="off"/>
           </div>
           <div class="right-side-upload">
             <div>
-              <img src="{{ url_for('static', filename='images/rabbit.png') }}" alt="icon" />
+              <img
+                src="{{ url_for('static', filename='images/rabbit.png') }}"
+                alt="icon"
+              />
             </div>
-            <div>rxxnier</div>
+            <div>{{username}}</div>
           </div>
         </div>
       </header>
@@ -88,19 +122,6 @@
         </ul>
       </aside>
       <article class="article-upload">
-
-        {% if all_errors %}
-        <div class="all_error_post">
-          <div>
-          <div>Oops! Something went wrong</div>
-          <div><button><i class="material-symbols-outlined">close</i></button></div>
-        </div>
-          {% for error in all_errors %}
-          <div>{{error}}</div>
-          {% endfor %}
-        </div>
-        {% endif %}
-
         <div class="post-text-box">Note The Link</div>
 
         <form class="post-textbox-upload" method="POST">
@@ -111,49 +132,62 @@
                 {% for folder in folders %}
                 <option value="{{folder}}">{{folder["folder_name"]}}</option>
                 {% endfor %}
-                <option value="createnew" >Create New</option>
+                <option value="createnew">Create New</option>
               </select>
             </div>
 
             <div class="title-input">
               <input
                 type="text"
-                name = "title"
+                name="title"
                 autocomplete="off"
                 autofocus
                 placeholder="Use Appropiate Title"
                 id="title"
+                value="{{title_value}}"
               />
             </div>
           </div>
 
           <div class="links">
-            <input type="text" name="link" id="link" placeholder="Link" />
+            <input
+              type="text"
+              name="link"
+              id="link"
+              placeholder="Link"
+              value="{{link_value}}"
+            />
           </div>
 
           <div class="description-textbox">
-            <textarea
-              name="description"
-              id="description"
-              cols="100"
-              rows="10"
-            ></textarea>
+            <textarea name="description" id="description" cols="100" rows="10">
+{{description_value}}</textarea
+            >
           </div>
 
           <div class="tagArea">
             <div>Tags</div>
             <div>
               <div>
-                <input type="text" name="tags" autocomplete="off" autofocus autocapitalize="on"/>
+                <input
+                  type="text"
+                  name="tags"
+                  autocomplete="off"
+                  autofocus
+                  autocapitalize="on"
+                  value="{{tags_value}}"
+                />
               </div>
-              <div id="multiple-tags">Multiple tags may be seperated by commas</div>
+              <div id="multiple-tags">
+                Multiple tags may be seperated by commas
+              </div>
             </div>
           </div>
 
           <div class="post-link-button">
             <button>
-                <i class="material-symbols-outlined">post_add</i>
-                <div>Post This</div>
+              <i class="material-symbols-outlined">post_add</i>
+              <div>Post This</div>
             </button>
           </div>
         </form>

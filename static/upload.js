@@ -4,7 +4,7 @@ const dashboardText = document.getElementById("dashboard-text");
 const bodyContainer = document.querySelector(".body-container");
 const sidebar = document.querySelector(".sidebar");
 const dashboardIcon = document.querySelector('.dashboard-icon');
-const header  = document.querySelector(".header");
+const header = document.querySelector(".header");
 const article = document.querySelector(".article-upload");
 const iconDash = document.querySelectorAll(".icon-dash");
 const iconDashboard = document.querySelector(".icon-dashboard");
@@ -28,8 +28,8 @@ dashButton.addEventListener('click', () => {
     iconDash.forEach((icon) => {
         icon.classList.toggle('hide');
     });
-    
-    
+
+
 });
 
 
@@ -42,29 +42,44 @@ const folderForm = document.querySelector(".add-new-folder");
 const folderFormClose = document.getElementById("close-folder-form");
 let isopenFolderForm = null;
 
-select.addEventListener("change", () =>{
-      if(select.value === "createnew"){
+select.addEventListener("change", () => {
+    if (select.value === "createnew") {
         folderForm.style.display = "block";
         isopenFolderForm = true;
-        folderFormClose.addEventListener("click", () =>{
+        folderFormClose.addEventListener("click", () => {
             folderForm.style.display = "none";
             select.value = "Folders";
         });
-        
+
     }
 
-})
 
+})
 
 const folderInput = document.getElementById("folder_name_input");
 const addNewFolderButton = document.getElementById("add-new-folder-button");
 
-
-folderInput.addEventListener("input", () =>{
-    addNewFolderButton.classList.remove("disabled-button");
+folderInput.addEventListener("input", () => {
+    if (folderInput.value.trim() !== "") {
+        addNewFolderButton.classList.remove("disabled-button");
+    } else {
+        addNewFolderButton.classList.add("disabled-button");
+    }
 });
 
-folderFormClose.addEventListener("click", () =>{
+
+folderFormClose.addEventListener("click", () => {
     addNewFolderButton.classList.add("disabled-button");
     folderInput.value = "";
 });
+
+const allErrorCLose = document.querySelector(".all_error_post-header div:nth-child(2) button");
+const allErrorBox = document.querySelector(".all_error_post");
+
+if (allErrorBox != null) {
+    const allErrorCLose = document.querySelector(".all_error_post-header div:nth-child(2) button");
+    allErrorCLose.addEventListener("click", () => {
+        allErrorBox.style.display = "none";
+    });
+
+}
