@@ -4,7 +4,7 @@ from helper import *
 from cs50 import SQL
 from werkzeug.security import check_password_hash, generate_password_hash
 import requests
-
+import json
 
 
 
@@ -202,6 +202,9 @@ def upload():
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
     folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ?", user_id[0]["user_id"])
+    folders_list = []
+    for folder in folders:
+        folders_list.append(folder["folder_name"])
 
 
 
@@ -265,14 +268,10 @@ def upload():
         
         else:
             folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_choice, user_id[0]["user_id"])
-            db.execute("INSERT INTO links(title_name, folder_category, link_url, description, folder_id) VALUES (?, ?, ?, ?, ?)",
-           (title, folder_choice, link, description, folder_id))
-
-
-
-        
-   
-    return render_template("upload.html", folders = folders, username = username)
+            db.execute("INSERT INTO links(title_name, link_url, folder_category, description, folder_id) VALUES (?, ?, ?, ?, ?)",
+           title, link, folder_choice, description, folder_id[0]['folder_id'] )
+                  
+    return render_template("upload.html", folders = folders_list, username = username)
 
 
 
@@ -280,10 +279,10 @@ def upload():
 @login_required
 def addFolder():
     if request.method == "POST":
-        folder_name = request.form.get("folder_name")
+        new_folder_name = request.form.get("folder_name")
         username = session["user_id"]
         user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
-        db.execute("INSERT INTO folders(folder_name, user_id) VALUES(?, ?)",  folder_name, user_id[0]["user_id"])
+        db.execute("INSERT INTO folders(folder_name, user_id) VALUES(?, ?)",  new_folder_name, user_id[0]["user_id"])
         return redirect("/home/upload")
     return redirect("/home/upload")
 
