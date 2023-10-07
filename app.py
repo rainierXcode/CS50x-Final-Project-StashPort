@@ -5,8 +5,7 @@ from cs50 import SQL
 from werkzeug.security import check_password_hash, generate_password_hash
 import requests
 import json
-
-
+import os
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -162,7 +161,11 @@ def signUI():
 @login_required
 def home():
     username = session["user_id"]
-    return render_template("home.html", username = username)
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
+    folder_list = db.execute("SELECT f.folder_name, si.src_path FROM folders AS f JOIN src_img AS si ON f.folder_category_id = si.src_id WHERE f.user_id = ?",  user_id[0]["user_id"])
+    
+
+    return render_template("home.html", username = username, folder_list = folder_list)
 
 
 @app.route("/logout")
@@ -214,7 +217,7 @@ def upload():
         link = request.form.get("link")
         description  = request.form.get("description")
         tags = request.form.get("tags")
-
+    
 
         if folder_choice == None:
             error_message_folder = "Folder named folder is not available"
@@ -264,7 +267,7 @@ def upload():
             description_value = description
             tags_value =tags
 
-            return render_template("upload.html", all_errors=all_error, folder_value = folder_value, title_value = title_value, link_value = link_value, description_value = description_value, tags_value = tags_value, username = username)
+            return render_template("upload.html", folders = folders_list, all_errors=all_error, folder_value = folder_value, title_value = title_value, link_value = link_value, description_value = description_value, tags_value = tags_value, username = username)
         
         else:
             folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_choice, user_id[0]["user_id"])
@@ -281,8 +284,14 @@ def addFolder():
     if request.method == "POST":
         new_folder_name = request.form.get("folder_name")
         username = session["user_id"]
+        img_select = request.form.get("selected_image")
+        img_select = os.path.basename(img_select)
+        folder_category_id = extractNum(img_select)
+        
         user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
-        db.execute("INSERT INTO folders(folder_name, user_id) VALUES(?, ?)",  new_folder_name, user_id[0]["user_id"])
+        db.execute("INSERT INTO folders(folder_category_id, folder_name, user_id) VALUES(? ,?, ?)",  folder_category_id, new_folder_name, user_id[0]["user_id"])
+       
+      
         return redirect("/home/upload")
     return redirect("/home/upload")
 

@@ -16,6 +16,11 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.4.0/tagify.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.4.0/tagify.css">
+
+        
+   
     <title>Upload</title>
   </head>
   <body>
@@ -28,9 +33,35 @@
             autofocus
             autocomplete="off"
             name="folder_name"
-            id="folder_name_input"
+            id = "folder_name_input"
           />
+          
         </div>
+          <hr>
+          <div class="folder_img_choice">
+            <div>Pick a Thumbnail</div>
+            <div class="all_folder_image">
+             <img src="../static/folderimg/1.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/2.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/3.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/4.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/5.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/6.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/7.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/8.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/9.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/10.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/11.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/12.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/13.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/14.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/15.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/16.png" alt="categories_thumbnail">
+             <img src="../static/folderimg/17.png" alt="categories_thumbnail">
+            </div>
+          </div>
+          <input type="hidden" id="selected_image" name="selected_image" value="">
+      
         <button id="add-new-folder-button" class="disabled-button">
           Add New
         </button>
@@ -156,14 +187,14 @@
               id="link"
               placeholder="Link"
               value="{{link_value}}"
+              autocomplete="off"
             />
           </div>
 
           <div class="description-textbox">
-            <textarea name="description" id="description" cols="100" rows="10">
-{{description_value}}</textarea
-            >
-          </div>
+            <textarea name="description" id="description" cols="100" rows="10" autofocus>{{description_value}}</textarea>
+        </div>
+        
 
           <div class="tagArea">
             <div>Tags</div>
@@ -176,6 +207,7 @@
                   autofocus
                   autocapitalize="on"
                   value="{{tags_value}}"
+                  id= "tags"
                 />
               </div>
               <div id="multiple-tags">
@@ -193,5 +225,7 @@
         </form>
       </article>
     </div>
+
+    
   </body>
 </html>

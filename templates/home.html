@@ -83,7 +83,37 @@
         </ul>
       </aside>
       <article class="article">
-       
+
+        {% if folder_list %}
+        <div class="left-thumbnail">
+          <div>Your Folders</div>
+            <div class="thumbnail-article">
+
+              {% for folder in folder_list %}
+              <a class="thumbnail-box" href="">
+                <img src="../static/folderimg/{{ folder['src_path'] }}" alt="">
+                <div>{{ folder['folder_name'] }}</div>
+              </a>
+            {% endfor %}
+            
+
+            </div>
+          </div>
+
+            <div class="side-content-article">
+
+              <div class="new-upload-box">
+                <div>New Uploads</div>
+                <div class="new-upload-post">
+                  Okay
+                </div>
+              </div>
+              
+            </div>
+
+            {% endif %}
+
+          
       </article>
     </div>
   </body>

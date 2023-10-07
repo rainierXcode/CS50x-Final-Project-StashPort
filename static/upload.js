@@ -55,23 +55,63 @@ select.addEventListener("change", () => {
 
 
 })
-
 const folderInput = document.getElementById("folder_name_input");
 const addNewFolderButton = document.getElementById("add-new-folder-button");
+const categoriesImg = document.querySelectorAll(".all_folder_image img");
 
-folderInput.addEventListener("input", () => {
+let haveInput = false;
+let haveImgSelect = false;
+
+if (folderInput != null) {
+  folderInput.addEventListener("input", () => {
     if (folderInput.value.trim() !== "") {
-        addNewFolderButton.classList.remove("disabled-button");
+      haveInput = true;
+      checkEnableButton();
     } else {
-        addNewFolderButton.classList.add("disabled-button");
+      haveInput = false;
+      checkEnableButton();
     }
-});
+  });
+
+  let selectedImg = null;
+  categoriesImg.forEach((img) => {
+    img.addEventListener("click", () => {
+
+        if (selectedImg !== null) {
+            selectedImg.classList.remove('select'); 
+        }
+        img.classList.add('select'); 
+        document.getElementById('selected_image').value = img.src;
+        selectedImg = img; 
+
+      if (haveInput) {
+        haveImgSelect = true;
+        checkEnableButton();
+      }
+    });
+  });
+
+  
+ 
+
+  
+
+  function checkEnableButton() {
+    if (haveInput && haveImgSelect) {
+      addNewFolderButton.classList.remove("disabled-button");
+    } else {
+      addNewFolderButton.classList.add("disabled-button");
+    }
+  }
+}
 
 
+if(folderInput != null){
 folderFormClose.addEventListener("click", () => {
     addNewFolderButton.classList.add("disabled-button");
     folderInput.value = "";
 });
+}
 
 const allErrorCLose = document.querySelector(".all_error_post-header div:nth-child(2) button");
 const allErrorBox = document.querySelector(".all_error_post");
@@ -83,3 +123,12 @@ if (allErrorBox != null) {
     });
 
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    var tagsInput = document.getElementById('tags');
+    var tagify = new Tagify(tagsInput, {
+     
+    });
+  });
+  
