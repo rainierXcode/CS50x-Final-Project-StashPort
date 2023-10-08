@@ -163,8 +163,6 @@ def home():
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
     folder_list = db.execute("SELECT f.folder_name, si.src_path FROM folders AS f JOIN src_img AS si ON f.folder_category_id = si.src_id WHERE f.user_id = ?",  user_id[0]["user_id"])
-    
-
     return render_template("home.html", username = username, folder_list = folder_list)
 
 
@@ -175,15 +173,7 @@ def logout():
 
 
 
-def link_verifier(url):
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            return True
-        else:
-            return False
-    except requests.exceptions.RequestException as e:
-        return False
+
 
         
 @app.route("/home/upload", methods=["GET", "POST"])
@@ -295,6 +285,10 @@ def addFolder():
         return redirect("/home/upload")
     return redirect("/home/upload")
 
+@app.route("/home/folder/<folder_name>")
+@login_required
+def folder(folder_name):
+        return render_template("random.html", folder_name = folder_name)
 
 
 if __name__ == '__main__':

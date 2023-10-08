@@ -9,6 +9,7 @@
     />
     <link rel="stylesheet" href="../static/style.css" />
     <script src="../static/dashboard.js" defer></script>
+    <script src="../static/openfolder.js" defer></script>
     <title>Home</title>
   </head>
   <body>
@@ -83,35 +84,38 @@
         </ul>
       </aside>
       <article class="article">
-
-        {% if folder_list %}
-        <div class="left-thumbnail">
+       
+        {% if folder_list|length != 0 %}
+        <div class="left-thumbnail" >
           <div>Your Folders</div>
             <div class="thumbnail-article">
 
               {% for folder in folder_list %}
-              <a class="thumbnail-box" href="">
+              <a class="thumbnail-box" href="/home/folder/{{folder['folder_name']}}">
                 <img src="../static/folderimg/{{ folder['src_path'] }}" alt="">
                 <div>{{ folder['folder_name'] }}</div>
               </a>
             {% endfor %}
-            
-
             </div>
           </div>
+
+          {% else %}
+          <div>Empty Folders</div>
+          {% endif %}
 
             <div class="side-content-article">
 
               <div class="new-upload-box">
                 <div>New Uploads</div>
                 <div class="new-upload-post">
-                  Okay
+                  
                 </div>
               </div>
               
             </div>
+            
 
-            {% endif %}
+      
 
           
       </article>

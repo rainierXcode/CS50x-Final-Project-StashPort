@@ -1,6 +1,7 @@
 from flask import render_template, redirect, url_for, session
 from functools import wraps
 import re
+import requests
 
 # Custom decorator to check if the user is authenticated
 def login_required(f):
@@ -21,3 +22,14 @@ def extractNum(path):
         return num
     else:
         return None
+
+
+def link_verifier(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return True
+        else:
+            return False
+    except requests.exceptions.RequestException as e:
+        return False
