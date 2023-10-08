@@ -288,7 +288,7 @@ def addFolder():
 @app.route("/home/folder/<folder_name>")
 @login_required
 def folder(folder_name):
-        return render_template("random.html", folder_name = folder_name)
+        return render_template("folder-post.html", folder_name = folder_name)
 
 
 if __name__ == '__main__':
