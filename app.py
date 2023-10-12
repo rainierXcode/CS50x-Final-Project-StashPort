@@ -12,6 +12,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+
 db = SQL("sqlite:///stashport.db")
 
 @app.route('/', methods=["GET", "POST"])
@@ -288,8 +289,22 @@ def addFolder():
 @app.route("/home/folder/<folder_name>")
 @login_required
 def folder(folder_name):
-        return render_template("folder-post.html", folder_name = folder_name)
+        username = session["user_id"]
+        user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+        folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)
+        post_contents = db.execute("SELECT title_name FROM links WHERE folder_id = ?", folder_id[0]["folder_id"])
+        other_folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ? ORDER BY folder_id DESC LIMIT 5", user_id)
+        return render_template("folder-post.html", post_contents = post_contents, other_folders = other_folders, current_folder = folder_name)
 
+
+@app.route("/home/folder/<folder_name>/delete-post/<title>")
+@login_required
+def deletePost(folder_name, title):
+    username = session["user_id"]
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+    folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)[0]["folder_id"]
+    db.execute("DELETE FROM links WHERE folder_id = ? AND title_name = ?", folder_id, title)
+    return redirect(url_for('folder', folder_name=folder_name))
 
 if __name__ == '__main__':
       app.run(debug=True)

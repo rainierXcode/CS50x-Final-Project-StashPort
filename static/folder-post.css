@@ -1,0 +1,139 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+
+.main-container{
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    grid-template-rows: min-content 10fr;
+}
+
+.nav{
+    grid-row-start: 1;
+    grid-row-end: 2;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px 5px 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.searchInput {
+    flex: 1; 
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  
+  
+
+  #search{
+    border-radius: 15px;
+    border: 2px solid lightgray;;
+    background-color:  lightgray;
+    padding: 3px 5px;
+  }
+
+  .middle-nav {
+    flex: 1; 
+    display: flex; 
+    justify-content: center; 
+    gap: 10px;
+  }
+
+  .nav-profile {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end; 
+
+  }
+  
+
+
+
+.article{
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    padding: 20px 30px 0 30px;
+    background-color: #F7ECE1;
+}
+
+.article-title{
+    margin-bottom: 25px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.article-title:hover{
+    font-size: 22px;
+}
+
+.aside{
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    padding: 10px;
+}
+
+
+.box-post{
+    width: 100%;
+    background-color: #fff;
+    margin-bottom: 10px;
+    padding: 15px 10px 15px 10px;
+    position: relative;
+    border-radius: 10px;
+}
+
+.post-title{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.post-title:hover{
+    font-style: italic;
+}
+
+.delete-post{
+    position: absolute;
+    top: 50%;
+    right: 1px;
+    transform: translate(-50%, -50%);
+    border: hidden;
+    background-color: transparent;
+    text-decoration: none;
+    color: #000;
+}
+
+.delete-post i:hover{
+    font-size: 26px;
+}
+
+.collection-box{
+    display: flex;
+    gap:10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.my-collection-title{
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.collection-img img{
+    width: 50px;
+}
+
+.collection-name{
+    font-weight: 550;
+}
