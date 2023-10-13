@@ -137,3 +137,17 @@
 .collection-name{
     font-weight: 550;
 }
+
+.icon{
+    color: #000;
+}
+
+@media (max-width: 768px) {
+    .main-container{
+        grid-template-columns: 1fr;
+    }
+
+    .aside{
+        display: none;
+    }
+}

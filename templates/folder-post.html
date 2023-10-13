@@ -24,8 +24,8 @@
       </div>
 
       <div class="middle-nav">
-        <a href=""><i class="material-symbols-outlined">Home</i></a>
-        <a href=""><i class="material-symbols-outlined">History</i></a>
+        <a href="/home"><i class="material-symbols-outlined icon">Home</i></a>
+        <a href=""><i class="material-symbols-outlined icon">History</i></a>
       </div>
 
       <div class="nav-profile">
@@ -34,13 +34,20 @@
     </nav>
 
     <aside class="aside">
+      {% if other_folders|length == 1 %}
+      <div class="my-collection-title">No Other Collections</div>
+      {% else %}
       <div class="my-collection-title">Other Collections</div>
+      {% endif %}
 
       {% for folder in other_folders %}
+
+      {% if folder['folder_name'] != current_folder %}
       <div class="collection-box">
         <div class="collection-img"><img src="{{ url_for('static', filename='folderimg/1.png') }}" alt="Category Image"></div>
         <div class="collection-name">{{folder['folder_name']}}</div>
       </div>
+      {% endif %}
       {% endfor %}
 
    
@@ -54,8 +61,10 @@
 
       {% for post in post_contents %}
       <div class="box-post">
+        <a href="https://youtu.be/yQfz2kfcpi8?si=uPoBEmoVyZqLqfbJ" target="_blank">
        <div class="post-title">{{post['title_name']}}</div>
-        <a class="delete-post" href="/home/folder/{{current_folder}}/delete-post/{{post['title_name']}}"><i class="material-symbols-outlined">Delete</i></a>   
+      </a>
+        <a class="delete-post" href="/home/folder/{{current_folder}}/delete-post/{{post['title_name']}}"><i class="material-symbols-outlined">Delete</i></a>
       </div>
       {% endfor %}
 

@@ -263,7 +263,8 @@ def upload():
         else:
             folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_choice, user_id[0]["user_id"])
             db.execute("INSERT INTO links(title_name, link_url, folder_category, description, folder_id) VALUES (?, ?, ?, ?, ?)",
-           title, link, folder_choice, description, folder_id[0]['folder_id'] )
+            title, link, folder_choice, description, folder_id[0]['folder_id'] )
+            return redirect("/home")
                   
     return render_template("upload.html", folders = folders_list, username = username)
 
