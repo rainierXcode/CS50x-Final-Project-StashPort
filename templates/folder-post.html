@@ -44,7 +44,8 @@
 
       {% if folder['folder_name'] != current_folder %}
       <div class="collection-box">
-        <div class="collection-img"><img src="{{ url_for('static', filename='folderimg/1.png') }}" alt="Category Image"></div>
+        <div class="collection-img"><img src="{{ url_for('static', filename='folderimg/' ~ folder['src_id'] ~ '.png') }}" alt="Category Image">
+        </div>
         <div class="collection-name">{{folder['folder_name']}}</div>
       </div>
       {% endif %}

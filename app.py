@@ -294,7 +294,8 @@ def folder(folder_name):
         user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
         folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)
         post_contents = db.execute("SELECT title_name FROM links WHERE folder_id = ?", folder_id[0]["folder_id"])
-        other_folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ? ORDER BY folder_id DESC LIMIT 5", user_id)
+        other_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE folders.user_id = ? ORDER BY folders.folder_id DESC LIMIT 5", user_id)
+        print(other_folders)
         return render_template("folder-post.html", post_contents = post_contents, other_folders = other_folders, current_folder = folder_name)
 
 

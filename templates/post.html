@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link
+    rel="stylesheet"
+    href="../static/folder-post.css"
+  />
+  <script src="../static/tagFunction.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.4.0/tagify.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.4.0/tagify.css">
+  <script src="../static/edit-main-post.js" defer></script>
+
+    <title>All Post</title>
+  </head>
+  <body>
+    <div class="main-container-post">
+    <nav class="nav">
+      <div class="searchInput">
+        <label for="search"
+          ><i class="material-symbols-outlined">Search</i></label
+        >
+        <input type="text" id="search" autocomplete="off" />
+      </div>
+
+      <div class="middle-nav">
+        <a href="/home"><i class="material-symbols-outlined icon">Home</i></a>
+        <a href=""><i class="material-symbols-outlined icon">History</i></a>
+      </div>
+
+      <div class="nav-profile">
+        <img src="../static/images/rabbit.png" alt="icon">
+      </div>
+    </nav>
+
+    <aside class="aside">
+ 
+      <div class="my-collection-title">Other Collections</div>
+   
+    </aside>
+
+    <article class="article">
+        <div class="main-post">
+            <button href="" class="main-post-edit-button" onclick="editPost()"><i class="material-symbols-outlined">edit</i></button>
+            <div class="main-post-title">My Toes My Knees</div>
+            <div class="main-post-tags">
+                <i class="material-symbols-outlined tags">sell</i>
+                <div>Coding</div>
+                <i class="material-symbols-outlined tags">sell</i>
+                <div>Codes</div>
+            </div>
+
+            <div class="main-post-link">
+                <div>Link</div>
+                <div><a href="">https//youtube.com</a></div>
+            </div>
+
+            <div class="main-post-description">
+                <div class="main-post-description-text">Description</div>
+                <div class="main-post-description-textbox">
+                    <textarea name="main-post-textarea" id="main-post-textarea" cols="100" rows="20" readonly style="resize: none;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam repellat, sit amet iusto suscipit sint, distinctio at debitis, eos tempora numquam repudiandae delectus repellendus! Placeat provident animi fugit repudiandae mollitia.</textarea>
+                </div>
+            </div>
+            
+            <form class="post-textbox-upload main-post-form" method="POST">
+                <button class="main-post-form-close-button" onclick="formClose()">
+                    <i class="material-symbols-outlined">close</i>
+                </button>
+
+                <div class="title-area">
+                  <div class="folder-dropdown">
+                    <select name="folders" id="folders">
+                      <option disabled selected>Collections</option>
+                      <option value="{{folder}}">Programming</option>
+                      <option value="createnew">Create New</option>
+                    </select>
+                  </div>
+      
+                  <div class="title-input">
+                    <input
+                      type="text"
+                      name="title"
+                      autocomplete="off"
+                      autofocus
+                      placeholder="Use Appropiate Title"
+                      id="title"
+                      value=""
+                    />
+                  </div>
+                </div>
+      
+                <div class="links">
+                  <input
+                    type="text"
+                    name="link"
+                    id="link"
+                    placeholder="Link"
+                    value=""
+                    autocomplete="off"
+                  />
+                </div>
+      
+                <div class="description-textbox">
+                  <textarea name="description" id="description" cols="100" rows="10" autofocus style="resize: none"></textarea>
+              </div>
+              
+      
+                <div class="tagArea">
+                  <div>Tags</div>
+                  <div>
+                    <div>
+                      <input
+                        type="text"
+                        name="tags"
+                        autocomplete="off"
+                        autofocus
+                        autocapitalize="on"
+                        value=""
+                        id= "tags"
+                      />
+                    </div>
+                    <div id="multiple-tags">
+                      Multiple tags may be seperated by commas
+                    </div>
+                  </div>
+                </div>
+      
+                <div class="post-link-button">
+                  <button>
+                    <i class="material-symbols-outlined">post_add</i>
+                    <div>Change</div>
+                  </button>
+                </div>
+              </form>
+        </div>
+    </article>
+  </div>
+  </body>
+</html>
