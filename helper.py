@@ -33,3 +33,17 @@ def link_verifier(url):
             return False
     except requests.exceptions.RequestException as e:
         return False
+
+def getTitlePath(titles):
+    titles_path = []
+    for title in titles:
+        titles_path.append(title['title_name'].replace(" ", "-"))
+    return titles_path
+
+def list_of_dict_title_data(post_contents, title_path_list):
+    result_list= []
+    for title, title_path in zip(post_contents,title_path_list):
+        result_dict = {'title_name' : title['title_name'], 'title_path' : title_path}
+        result_list.append(result_dict)
+    
+    return result_list

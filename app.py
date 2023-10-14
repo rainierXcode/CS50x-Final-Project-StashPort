@@ -294,9 +294,12 @@ def folder(folder_name):
         user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
         folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)
         post_contents = db.execute("SELECT title_name FROM links WHERE folder_id = ?", folder_id[0]["folder_id"])
+        title_path_list = getTitlePath(post_contents)
+        title_data = list_of_dict_title_data(post_contents, title_path_list)
+
+
         other_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE folders.user_id = ? ORDER BY folders.folder_id DESC LIMIT 5", user_id)
-        print(other_folders)
-        return render_template("folder-post.html", post_contents = post_contents, other_folders = other_folders, current_folder = folder_name)
+        return render_template("folder-post.html", post_contents = title_data, other_folders = other_folders, current_folder = folder_name)
 
 
 @app.route("/home/folder/<folder_name>/delete-post/<title>")
@@ -307,6 +310,52 @@ def deletePost(folder_name, title):
     folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)[0]["folder_id"]
     db.execute("DELETE FROM links WHERE folder_id = ? AND title_name = ?", folder_id, title)
     return redirect(url_for('folder', folder_name=folder_name))
+
+
+@app.route("/home/folder/<folder_name>/post/<title>", methods=["GET", "POST"])
+@login_required
+def viewPost(folder_name, title):
+    username = session["user_id"]
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
+    folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ?", user_id[0]["user_id"])
+    folders_list = []
+    for folder in folders:
+        folders_list.append(folder["folder_name"])
+
+
+
+    title_name = title.replace("-", " ")
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+    folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)[0]["folder_id"]
+    print(folder_id)
+    print(folder_name)
+    post_contents = db.execute("SELECT link_url, description FROM links WHERE folder_id = ? AND title_name = ? ", folder_id, title_name)[0]
+    
+    
+    if request.method == "POST":
+        form_title = request.form.get('title')
+        form_folder = request.form.get('folders')
+        form_link = request.form.get('link')
+        form_description = request.form.get('description')
+
+        title_name = form_title.replace(" ", "-")
+
+        if form_title != title_name:
+            db.execute("UPDATE links SET title_name = ? WHERE folder_id = ?", form_title, folder_id)
+        
+        if post_contents['link_url'] != form_link:
+            db.execute("UPDATE links SET link_url = ? WHERE folder_id = ?", form_link, folder_id)
+
+        if post_contents['description'] != form_description:
+            db.execute("UPDATE links SET description = ? WHERE folder_id = ?", form_description, folder_id)
+        
+        if form_folder != folder_name:
+            new_folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", form_folder, user_id)[0]["folder_id"]
+            db.execute("UPDATE links SET folder_category = ?, folder_id = ? WHERE folder_id = ? AND title_name = ?", form_folder , new_folder_id, folder_id, title_name)
+            
+        return redirect("/home/folder/" + form_folder + "/post/" + title_name )
+    
+    return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list)
 
 if __name__ == '__main__':
       app.run(debug=True)

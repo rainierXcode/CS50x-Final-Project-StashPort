@@ -14,7 +14,7 @@
     <title>All Post</title>
   </head>
   <body>
-    <div class="main-container">
+    <div class="main-container-post">
     <nav class="nav">
       <div class="searchInput">
         <label for="search"
@@ -56,13 +56,13 @@
     </aside>
 
     <article class="article">
-      <div class="article-title">Programming Post</div>
+      <div class="article-title">{{current_folder}} Post</div>
 
       
 
       {% for post in post_contents %}
       <div class="box-post">
-        <a href="https://youtu.be/yQfz2kfcpi8?si=uPoBEmoVyZqLqfbJ" target="_blank">
+        <a href="/home/folder/{{current_folder}}/post/{{post['title_path']}}">
        <div class="post-title">{{post['title_name']}}</div>
       </a>
         <a class="delete-post" href="/home/folder/{{current_folder}}/delete-post/{{post['title_name']}}"><i class="material-symbols-outlined">Delete</i></a>

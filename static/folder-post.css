@@ -8,7 +8,8 @@
     height: 100vh;
     display: grid;
     grid-template-columns: 4fr 1fr;
-    grid-template-rows: min-content 10fr;
+    grid-template-rows: min-content minmax(1fr, autofill);
+
 }
 
 .nav{

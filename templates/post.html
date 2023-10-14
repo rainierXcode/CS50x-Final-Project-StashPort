@@ -9,12 +9,12 @@
     />
     <link
     rel="stylesheet"
-    href="../static/folder-post.css"
+    href= "{{ url_for('static', filename='folder-post.css') }}"
   />
-  <script src="../static/tagFunction.js" defer></script>
+  <script src= "{{ url_for('static', filename='tagFunction.js') }}" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.4.0/tagify.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.4.0/tagify.css">
-  <script src="../static/edit-main-post.js" defer></script>
+  <script src="{{ url_for('static', filename='edit-main-post.js') }}" defer></script>
 
     <title>All Post</title>
   </head>
@@ -34,7 +34,7 @@
       </div>
 
       <div class="nav-profile">
-        <img src="../static/images/rabbit.png" alt="icon">
+        <img src="{{ url_for('static', filename='images/rabbit.png') }}" alt="icon">
       </div>
     </nav>
 
@@ -46,8 +46,8 @@
 
     <article class="article">
         <div class="main-post">
-            <button href="" class="main-post-edit-button" onclick="editPost()"><i class="material-symbols-outlined">edit</i></button>
-            <div class="main-post-title">My Toes My Knees</div>
+            <button  class="main-post-edit-button" onclick="editPost()"><i class="material-symbols-outlined">edit</i></button>
+            <div class="main-post-title">{{title_name}}</div>
             <div class="main-post-tags">
                 <i class="material-symbols-outlined tags">sell</i>
                 <div>Coding</div>
@@ -57,13 +57,13 @@
 
             <div class="main-post-link">
                 <div>Link</div>
-                <div><a href="">https//youtube.com</a></div>
+                <div><a href="{{post_contents['link_url']}}" target="_blank">{{post_contents['link_url']}}</a></div>
             </div>
 
             <div class="main-post-description">
                 <div class="main-post-description-text">Description</div>
                 <div class="main-post-description-textbox">
-                    <textarea name="main-post-textarea" id="main-post-textarea" cols="100" rows="20" readonly style="resize: none;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam repellat, sit amet iusto suscipit sint, distinctio at debitis, eos tempora numquam repudiandae delectus repellendus! Placeat provident animi fugit repudiandae mollitia.</textarea>
+                    <textarea name="main-post-textarea" id="main-post-textarea" cols="100" rows="20" readonly style="resize: none;">{{post_contents['description']}}</textarea>
                 </div>
             </div>
             
@@ -76,7 +76,13 @@
                   <div class="folder-dropdown">
                     <select name="folders" id="folders">
                       <option disabled selected>Collections</option>
-                      <option value="{{folder}}">Programming</option>
+                      {% for folder in folders %}
+                      {% if folder == folder_name %}
+                      <option value="{{folder}}" selected>{{folder}}</option>
+                      {%else %}
+                      <option value="{{folder}}">{{folder}}</option>
+                      {% endif %}
+                      {% endfor %}
                       <option value="createnew">Create New</option>
                     </select>
                   </div>
@@ -89,7 +95,7 @@
                       autofocus
                       placeholder="Use Appropiate Title"
                       id="title"
-                      value=""
+                      value="{{title_name}}"
                     />
                   </div>
                 </div>
@@ -100,13 +106,13 @@
                     name="link"
                     id="link"
                     placeholder="Link"
-                    value=""
+                    value="{{post_contents['link_url']}}"
                     autocomplete="off"
                   />
                 </div>
       
                 <div class="description-textbox">
-                  <textarea name="description" id="description" cols="100" rows="10" autofocus style="resize: none"></textarea>
+                  <textarea name="description" id="description" cols="100" rows="10" autofocus style="resize: none">{{post_contents['description']}}</textarea>
               </div>
               
       
