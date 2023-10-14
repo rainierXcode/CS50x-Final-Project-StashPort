@@ -3,7 +3,8 @@ function editPost(){
     form.style.display = "block";
 }
 
-function formClose(){
+function formClose(event){
+    event.preventDefault(); 
     const form = document.querySelector(".main-post-form");
     form.style.display = "none";
 }

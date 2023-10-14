@@ -353,7 +353,9 @@ def viewPost(folder_name, title):
             new_folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", form_folder, user_id)[0]["folder_id"]
             db.execute("UPDATE links SET folder_category = ?, folder_id = ? WHERE folder_id = ? AND title_name = ?", form_folder , new_folder_id, folder_id, title_name)
             
-        return redirect("/home/folder/" + form_folder + "/post/" + title_name )
+        # return redirect("/home/folder/" + form_folder + "/post/" + title_name )
+        return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list)
+
     
     return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list)
 
