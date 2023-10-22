@@ -89,29 +89,7 @@ href="{{ url_for('static', filename='history.css') }}"
         </ul>
       </aside>
 
-      <article class="article-history">
-
-            <!-- <div class="history-box">
-              <div class="history-date">November 03, 2023</div>
-              <ul>
-                <li>
-                  <div class="history-text">Created a Categories Named Programmin</div>
-                  <div>08:30 AM</div>
-                </li>
-                <hr>
-                <li>
-                  <div class="history-text">Created a Categories Named Programmin</div>
-                  <div>08:30 AM</div>
-                </li>
-                <hr>
-
-                <li>
-                  <div class="history-text">Created a Categories Named Programmin</div>
-                  <div>08:30 AM</div>
-                </li>
-                <hr>
-              </ul>
-            </div> -->
+      <article class="article-history">   
 
             {% for date,  items in organized_history.items() %}
             <div class="history-box">

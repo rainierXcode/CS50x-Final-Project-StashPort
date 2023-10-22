@@ -257,6 +257,7 @@ a{
     background-color: #fff;
     height: 300px;
     padding: 5px;
+    border-radius: 8px;
 }
 
 .new-upload-post-box{
@@ -1037,6 +1038,20 @@ a{
   
   
   }
+
+  
+.header-upload{
+    height: 60px;
+}
+
+.article-upload{
+    margin-top: 60px;
+}
+
+.article-upload.hide{
+    margin-left: 50px;
+}
+
 
 
 

@@ -65,7 +65,12 @@ def loginUI():
         
         if login_success:
             session["user_id"] = username
-            
+            user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+            date = database_date_format(getDate())
+            history = "Signed in."
+            history_type = "ACCOUNT"
+            time = getTime()
+            db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
             return redirect("/home")
 
 
@@ -148,6 +153,12 @@ def signUI():
         
         hash_pass=generate_password_hash(password);
         db.execute("INSERT INTO users(first_name, last_name, username, password, date_created, time_created) VALUES( ?, ?, ?, ?, ?, ?)", fName, lName, username, hash_pass, getDate(), getTime() )
+        user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+        date = database_date_format(getDate())
+        history = "Created an account."
+        history_type = "ACCOUNT"
+        time = getTime()
+        db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
         return redirect("/")
         
 
@@ -174,6 +185,13 @@ def home():
 
 @app.route("/logout")
 def logout():
+    username = session["user_id"]
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+    date = database_date_format(getDate())
+    history = "Logged out."
+    history_type = "ACCOUNT"
+    time = getTime()
+    db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
     session["user_id"] = None
     return redirect("/")
 
@@ -199,8 +217,8 @@ def upload():
     all_error = []
 
     username = session["user_id"]
-    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
-    folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ?", user_id[0]["user_id"])
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+    folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ?", user_id)
     folders_list = []
     for folder in folders:
         folders_list.append(folder["folder_name"])
@@ -270,9 +288,14 @@ def upload():
             return render_template("upload.html", folders = folders_list, all_errors=all_error, folder_value = folder_value, title_value = title_value, link_value = link_value, description_value = description_value, tags_value = tags_value, username = username)
         
         else:
-            folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_choice, user_id[0]["user_id"])
+            folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_choice, user_id)
             db.execute("INSERT INTO links(title_name, link_url, folder_category, description, folder_id, date) VALUES (?, ?, ?, ?, ?, ?)",
             title, link, folder_choice, description, folder_id[0]['folder_id'], getLinkTime())
+            date = database_date_format(getDate())
+            history = f'Added a new post titled "{title}" under {folder_choice} category'
+            history_type = "POST"
+            time = getTime()
+            db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
             return redirect("/home")
                   
     return render_template("upload.html", folders = folders_list, username = username)
@@ -289,8 +312,13 @@ def addFolder():
         img_select = os.path.basename(img_select)
         folder_category_id = extractNum(img_select)
         
-        user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
-        db.execute("INSERT INTO folders(folder_category_id, folder_name, user_id) VALUES(? ,?, ?)",  folder_category_id, new_folder_name, user_id[0]["user_id"])
+        user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+        db.execute("INSERT INTO folders(folder_category_id, folder_name, user_id) VALUES(? ,?, ?)",  folder_category_id, new_folder_name, user_id)
+        date = database_date_format(getDate())
+        history = f'Established a new category named "{new_folder_name}."'
+        history_type = "CATEGORIES"
+        time = getTime()
+        db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
        
       
         return redirect("/home/upload")
@@ -318,12 +346,18 @@ def deletePost(folder_name, title):
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
     folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)[0]["folder_id"]
     db.execute("DELETE FROM links WHERE folder_id = ? AND title_name = ?", folder_id, title)
+    date = database_date_format(getDate())
+    history = f'Deleted a post titled "{title}" under the "{folder_name}" category.'
+    history_type = "POST"
+    time = getTime()
+    db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
     return redirect(url_for('folder', folder_name=folder_name))
 
 
 @app.route("/home/folder/<folder_name>/post/<title>", methods=["GET", "POST"])
 @login_required
 def viewPost(folder_name, title):
+    path_title = title
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
     folders = db.execute("SELECT folder_name FROM folders WHERE user_id = ?", user_id[0]["user_id"])
@@ -336,35 +370,57 @@ def viewPost(folder_name, title):
     title_name = title.replace("-", " ")
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
     folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)[0]["folder_id"]
-    print(folder_id)
-    print(folder_name)
-    post_contents = db.execute("SELECT link_url, description FROM links WHERE folder_id = ? AND title_name = ? ", folder_id, title_name)[0]
+    folder_id = int(folder_id)
+    title_name = str(title_name)
+    post_contents = db.execute("SELECT title_name, link_url, description FROM links  WHERE folder_id = ? AND title_name = ? ", folder_id, title_name)[0]
     other_latest_post = db.execute("SELECT links.title_name FROM links JOIN folders ON links.folder_id = folders.folder_id JOIN users ON folders.user_id = users.user_id WHERE users.user_id = ? AND links.title_name != ?",  user_id, title_name)
     
-    
+    date = database_date_format(getDate())
+    time = getTime()
+    history_type = "POST"
+   
     if request.method == "POST":
+
+       
         form_title = request.form.get('title')
         form_folder = request.form.get('folders')
         form_link = request.form.get('link')
         form_description = request.form.get('description')
 
-        title_name = form_title.replace(" ", "-")
+        form_title = form_title.replace(" ", "-")
 
+
+        date = database_date_format(getDate())
+        time = getTime()
+        history_type = "POST"
+
+       
         if form_title != title_name:
+            form_title = form_title.replace("-", " ")
+            path_title = form_title.replace(" ", "-")
             db.execute("UPDATE links SET title_name = ? WHERE folder_id = ?", form_title, folder_id)
+            history = f'Edited the post title "{title_name}" to "{form_title}" under the "{folder_name}" category.'
+            db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
+
         
         if post_contents['link_url'] != form_link:
             db.execute("UPDATE links SET link_url = ? WHERE folder_id = ?", form_link, folder_id)
+            history = f'Updated the link with the title "{form_title}" in the "{folder_name}" category.'
+            db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
+
 
         if post_contents['description'] != form_description:
             db.execute("UPDATE links SET description = ? WHERE folder_id = ?", form_description, folder_id)
+            history = f'Updated the description with the title "{form_title}" in the "{folder_name}" category.'
+            db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
         
         if form_folder != folder_name:
             new_folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", form_folder, user_id)[0]["folder_id"]
             db.execute("UPDATE links SET folder_category = ?, folder_id = ? WHERE folder_id = ? AND title_name = ?", form_folder , new_folder_id, folder_id, title_name)
+            history = f'Moved the post titled "{form_title}" to the "{form_folder}" category.'
+            db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
             
-      
-        return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list, other_latest_post = other_latest_post)
+        return redirect(f'/home/folder/{form_folder}/post/{path_title}')
 
     
     return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list, other_latest_post = other_latest_post)
@@ -379,7 +435,7 @@ def history(type):
     organized_history = {}
 
     if str(type) == "account":
-        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC", user_id, str(type).upper())
+        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC, history_id DESC", user_id, str(type).upper())
         for record in records:
             history = record['history']
             time = record['time']
@@ -393,7 +449,7 @@ def history(type):
         return render_template("history.html", organized_history = organized_history)
     
     elif str(type) == "categories":
-        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC", user_id, str(type).upper())
+        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC, history_id DESC", user_id, str(type).upper())
         for record in records:
             history = record['history']
             time = record['time']
@@ -407,7 +463,7 @@ def history(type):
         return render_template("history.html", organized_history = organized_history)
     
     elif str(type) == "post":
-        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC", user_id, str(type).upper())
+        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC, history_id DESC", user_id, str(type).upper())
         for record in records:
             history = record['history']
             time = record['time']

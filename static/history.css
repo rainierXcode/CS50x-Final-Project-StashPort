@@ -12,16 +12,23 @@
     margin-top: var(--nav-height)
 }
 
+body{
+    background-color: #000;
+}
 .article-history{
     margin-left: calc(var(--sidebarwidth) + 50px);
     margin-right: 50px;
     margin-top: var(--nav-height);
     padding-top: 20px;
     box-sizing: border-box;
+    min-height: 100vh;  
+    overflow-y: auto;
 }
 
 .main-container-post{
     background-color: #5DA9E9;
+    min-height: 100%;
+    overflow: auto;
 }
 
 .history-box{

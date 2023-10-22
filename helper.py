@@ -81,7 +81,7 @@ def getTime():
     return str(time_format)
 
 def getLinkTime():
-    current_datetime = datetime.datetime.now()
+    current_datetime = datetime.now()
     date_format = current_datetime.strftime("%m-%d-%Y")
     return str(date_format)
 
