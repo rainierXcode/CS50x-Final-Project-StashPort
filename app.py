@@ -477,8 +477,22 @@ def history(type):
         return render_template("history.html", organized_history = organized_history)
 
 
+@app.route("/search", methods=["GET"])
+@login_required
+def search():
+    search_query = request.args.get("q")
+    username = session["user_id"]
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+    search_result = db.execute(
+    "SELECT links.title_name, folder_category , REPLACE(title_name, ' ', '-') AS title_path FROM links "
+    "JOIN folders ON folders.folder_id = links.folder_id "
+    "JOIN users ON folders.user_id = users.user_id "
+    "WHERE title_name LIKE ? OR description LIKE ? AND users.user_id = ?",
+    '%' + search_query + '%', '%' + search_query + '%', user_id
+)
+    newest_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE user_id = ? ORDER BY folder_id DESC", user_id)
 
-
+    return render_template("search.html", search_result = search_result, newest_folders = newest_folders)
 
 if __name__ == '__main__':
       app.run(debug=True)

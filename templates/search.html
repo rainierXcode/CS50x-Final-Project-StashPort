@@ -11,7 +11,7 @@
     rel="stylesheet"
     href="{{ url_for('static', filename='folder-post.css') }}"
   />
-    <title>All Post</title>
+    <title>Search</title>
   </head>
   <body>
     <div class="main-container-post">
@@ -33,22 +33,22 @@
       </div>
     </nav>
 
-    <aside class="aside">
-      {% if other_folders|length == 1 %}
+    <aside class="aside"> 
+      <div class="my-collection-title">Newest Collections</div>
+   
+      {% if newest_folders|length == 1 %}
       <div class="my-collection-title">No Other Collections</div>
       {% else %}
       <div class="my-collection-title">Other Collections</div>
       {% endif %}
 
-      {% for folder in other_folders %}
-
-      {% if folder['folder_name'] != current_folder %}
-      <a class="collection-box" href="/home/folder/{{folder['folder_name']}}">
+      {% for folder in newest_folders %}
+      <a class="collection-box" href="/home/folder/{{newest_folders['folder_name']}}">
         <div class="collection-img"><img src="{{ url_for('static', filename='folderimg/' ~ folder['src_id'] ~ '.png') }}" alt="Category Image">
         </div>
         <div class="collection-name">{{folder['folder_name']}}</div>
       </a>
-      {% endif %}
+
       {% endfor %}
 
    
@@ -56,19 +56,18 @@
     </aside>
 
     <article class="article">
-      <div class="article-title">{{current_folder}} Post</div>
+      <div class="article-title">Search Result</div>
 
-      
+      {% for result in search_result %}
 
-      {% for post in post_contents %}
       <div class="box-post">
-        <a href="/home/folder/{{current_folder}}/post/{{post['title_path']}}">
-       <div class="post-title">{{post['title_name']}}</div>
+        <a href="/home/folder/{{result['folder_category']}}/post/{{result['title_path']}}">
+        <div class="folder-belong">{{result['folder_category']}}</div>
+       <div class="post-title">{{result['title_name']}}</div>
       </a>
-        <a class="delete-post" href="/home/folder/{{current_folder}}/delete-post/{{post['title_name']}}"><i class="material-symbols-outlined">Delete</i></a>
       </div>
-      {% endfor %}
 
+      {% endfor %}
     </article>
   </div>
   </body>

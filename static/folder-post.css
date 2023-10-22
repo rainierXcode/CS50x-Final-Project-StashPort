@@ -150,6 +150,11 @@
     gap:10px;
     align-items: center;
     margin-bottom: 15px;
+    text-decoration: none;
+}
+
+.collection-box:hover{
+    text-decoration: underline;
 }
 
 .my-collection-title{
@@ -163,6 +168,8 @@
 
 .collection-name{
     font-weight: 550;
+    text-decoration: none;
+    color: #000;
 }
 
 .icon{
@@ -445,6 +452,27 @@
     text-decoration: underline;
     color: #000;
   }
+
+  /* search html */
+  .box-post a{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    color: #000;
+  }
+
+  .folder-belong {
+    background-color: #3595f6;
+    color: #fff;
+    padding: 3px;
+    border-radius: 5px;
+    font-size: .7rem;
+  }
+
+  
+
 
   @media (max-width: 768px) {
 
