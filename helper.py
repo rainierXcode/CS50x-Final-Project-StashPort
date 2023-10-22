@@ -2,6 +2,9 @@ from flask import render_template, redirect, url_for, session
 from functools import wraps
 import re
 import requests
+from datetime import datetime
+
+
 
 # Custom decorator to check if the user is authenticated
 def login_required(f):
@@ -26,8 +29,9 @@ def extractNum(path):
 
 def link_verifier(url):
     try:
+        
         response = requests.get(url)
-        if response.status_code == 200:
+        if response.status_code == 200 or response.status_code == 403:
             return True
         else:
             return False
@@ -47,3 +51,51 @@ def list_of_dict_title_data(post_contents, title_path_list):
         result_list.append(result_dict)
     
     return result_list
+
+
+def getDate():
+    current_datetime = datetime.now()
+    date_format=  current_datetime.strftime("%B %d, %Y")
+    return str(date_format)
+
+
+def getTime():
+    current_datetime = datetime.now()
+    hour = current_datetime.hour
+    minute = current_datetime.minute
+
+    if hour < 12:
+        am_pm = "AM"
+    else:
+        am_pm = "PM"
+
+
+    if hour == 0:
+        hour = 12
+    elif hour > 12:
+        hour -= 12
+
+    hour_str = str(hour) if hour >= 10 else "0" + str(hour) 
+    minute_str = str(minute) if minute >= 10 else "0" + str(minute)
+    time_format = hour_str + ":" + minute_str + " " + am_pm
+    return str(time_format)
+
+def getLinkTime():
+    current_datetime = datetime.datetime.now()
+    date_format = current_datetime.strftime("%m-%d-%Y")
+    return str(date_format)
+
+
+
+
+
+
+def history_date_format(date_record):
+    date_object = datetime.strptime(date_record, "%m-%d-%Y")
+    formatted_date = date_object.strftime("%B %d, %Y")
+    return str(formatted_date)
+
+def database_date_format(orig_date):
+    date_object = datetime.strptime(orig_date, "%B %d, %Y")
+    datebase_date = date_object.strftime("%m-%d-%Y")
+    return str(datebase_date)

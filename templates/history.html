@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='folder-post.css') }}"
+  />
+  <link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='style.css') }}"
+/>
+<link
+rel="stylesheet"
+href="{{ url_for('static', filename='history.css') }}"
+/>
+    <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+  />
+</head>
+<body>
+    <div class="main-container-post">
+    <nav class="nav nav-history">
+        <div class="searchInput">
+          <label for="search"
+            ><i class="material-symbols-outlined">Search</i></label
+          >
+          <input type="text" id="search" autocomplete="off" autofocus />
+        </div>
+  
+        <div class="middle-nav">
+          <a href="/history/post">Post</a>
+          <a href="/history/categories">Categories</a>
+          <a href="/history/account">Account</a>
+        </div>
+  
+        <div class="nav-profile">
+          <img src="{{ url_for('static', filename='images/rabbit.png') }}" alt="icon">
+        </div>
+      </nav>
+    <aside class="sidebar history-sidebar">
+        <button class="dashboard-box">
+          <div class="icon-dashboard">
+            <i class="material-symbols-outlined dashboard-icon">dashboard</i>
+          </div>
+          <div id="dashboard-text">Dashboard</div>
+        </button>
+
+        <ul >
+          <a href="/home">
+            <li class="icon-dash">
+              <i class="material-symbols-outlined">Home</i>
+              <div class="dash-text">Home</div>
+            </li>
+          </a>
+
+          <a href="">
+            <li class="icon-dash">
+              <i class="material-symbols-outlined">account_circle</i>
+              <div class="dash-text">Profile</div>
+            </li>
+          </a>
+
+          <a href="">
+            <li class="icon-dash">
+              <i class="material-symbols-outlined">history</i>
+              <div class="dash-text">History</div>
+            </li>
+          </a>
+
+          <a href="">
+            <li class="icon-dash">
+              <i class="material-symbols-outlined">settings</i>
+              <div class="dash-text">Settings</div>
+            </li>
+          </a>
+
+          <a href="/logout">
+            <li class="icon-dash logout-icon">
+              <i class="material-symbols-outlined">logout</i>
+              <div class="dash-text">Logout</div>
+            </li>
+          </a>
+
+       
+        </ul>
+      </aside>
+
+      <article class="article-history">
+
+            <!-- <div class="history-box">
+              <div class="history-date">November 03, 2023</div>
+              <ul>
+                <li>
+                  <div class="history-text">Created a Categories Named Programmin</div>
+                  <div>08:30 AM</div>
+                </li>
+                <hr>
+                <li>
+                  <div class="history-text">Created a Categories Named Programmin</div>
+                  <div>08:30 AM</div>
+                </li>
+                <hr>
+
+                <li>
+                  <div class="history-text">Created a Categories Named Programmin</div>
+                  <div>08:30 AM</div>
+                </li>
+                <hr>
+              </ul>
+            </div> -->
+
+            {% for date,  items in organized_history.items() %}
+            <div class="history-box">
+              <div class="history-date">{{date}}</div>
+
+              {% for item in items %}
+              <ul>
+                <li>
+                  <div class="history-text">{{item[0]}}</div>
+                  <div>{{item[1]}}</div>
+                </li>
+                <hr>           
+              </ul>
+            {% endfor %}
+            </div>
+            {% endfor %}
+
+
+         
+         
+
+      </article>
+
+      </div>
+</body>
+</html>

@@ -40,7 +40,16 @@
 
     <aside class="aside">
  
-      <div class="my-collection-title">Other Collections</div>
+      <div class="my-collection-title">Latest {{folder_name}} Post</div>
+
+      <div class="other-latest-post-box">
+
+        {% for post in other_latest_post %}
+             <a class="other-latest-post" href="">
+              {{post['title_name']}}
+             </a>
+        {% endfor %}
+      </div>
    
     </aside>
 

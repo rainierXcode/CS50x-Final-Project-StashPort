@@ -3,8 +3,6 @@ from flask_session import Session
 from helper import * 
 from cs50 import SQL
 from werkzeug.security import check_password_hash, generate_password_hash
-import requests
-import json
 import os
 
 app = Flask(__name__)
@@ -20,9 +18,6 @@ def loginUI():
     error_message_username = None 
     error_message_password = None 
     have_error = False
-    execute = None
-    username_value = None
-    password_value = None
     login_success = True
 
     if session.get("user_id"):
@@ -70,6 +65,7 @@ def loginUI():
         
         if login_success:
             session["user_id"] = username
+            
             return redirect("/home")
 
 
@@ -151,7 +147,7 @@ def signUI():
             return render_template("signup.html", fname_error = error_message_fName, lname_error= error_message_lName, username_error = error_message_username, password_error = error_message_password , confirm_pass_error = error_message_password_confirm,fname_value = fName, lname_value = lName, username_value = username, password_value= password, confirm_password_value = confirm_password)
         
         hash_pass=generate_password_hash(password);
-        db.execute("INSERT INTO users(first_name, last_name, username, password) VALUES( ?, ?, ?, ?)", fName, lName, username, hash_pass)
+        db.execute("INSERT INTO users(first_name, last_name, username, password, date_created, time_created) VALUES( ?, ?, ?, ?, ?, ?)", fName, lName, username, hash_pass, getDate(), getTime() )
         return redirect("/")
         
 
@@ -164,7 +160,16 @@ def home():
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
     folder_list = db.execute("SELECT f.folder_name, si.src_path FROM folders AS f JOIN src_img AS si ON f.folder_category_id = si.src_id WHERE f.user_id = ?",  user_id[0]["user_id"])
-    return render_template("home.html", username = username, folder_list = folder_list)
+    query = """
+    SELECT links.title_name, folders.folder_name, REPLACE(links.title_name, ' ', '-') AS title_path
+    FROM links
+    JOIN folders ON links.folder_id = folders.folder_id
+    JOIN users ON folders.user_id = users.user_id
+    WHERE users.user_id = ?
+    """
+    new_post_list = db.execute(query, (user_id[0]["user_id"]))
+    full_name = db.execute("SELECT first_name || ' ' || last_name AS full_name FROM users WHERE user_id = ?", user_id[0]["user_id"] )
+    return render_template("home.html", username = username, folder_list = folder_list, new_post_list = new_post_list, full_name = full_name[0])
 
 
 @app.route("/logout")
@@ -219,6 +224,10 @@ def upload():
         if title == "":
             error_message_title = "Title cannot be empty"
             all_error.append(error_message_title)
+
+        elif link_verifier(title):
+            error_message_title = "Title must not be an URL"
+            all_error.append(error_message_title)
          
 
         elif len(title) < 5:
@@ -262,8 +271,8 @@ def upload():
         
         else:
             folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_choice, user_id[0]["user_id"])
-            db.execute("INSERT INTO links(title_name, link_url, folder_category, description, folder_id) VALUES (?, ?, ?, ?, ?)",
-            title, link, folder_choice, description, folder_id[0]['folder_id'] )
+            db.execute("INSERT INTO links(title_name, link_url, folder_category, description, folder_id, date) VALUES (?, ?, ?, ?, ?, ?)",
+            title, link, folder_choice, description, folder_id[0]['folder_id'], getLinkTime())
             return redirect("/home")
                   
     return render_template("upload.html", folders = folders_list, username = username)
@@ -330,6 +339,7 @@ def viewPost(folder_name, title):
     print(folder_id)
     print(folder_name)
     post_contents = db.execute("SELECT link_url, description FROM links WHERE folder_id = ? AND title_name = ? ", folder_id, title_name)[0]
+    other_latest_post = db.execute("SELECT links.title_name FROM links JOIN folders ON links.folder_id = folders.folder_id JOIN users ON folders.user_id = users.user_id WHERE users.user_id = ? AND links.title_name != ?",  user_id, title_name)
     
     
     if request.method == "POST":
@@ -353,11 +363,66 @@ def viewPost(folder_name, title):
             new_folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", form_folder, user_id)[0]["folder_id"]
             db.execute("UPDATE links SET folder_category = ?, folder_id = ? WHERE folder_id = ? AND title_name = ?", form_folder , new_folder_id, folder_id, title_name)
             
-        # return redirect("/home/folder/" + form_folder + "/post/" + title_name )
-        return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list)
+      
+        return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list, other_latest_post = other_latest_post)
 
     
-    return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list)
+    return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list, other_latest_post = other_latest_post)
+
+
+
+@app.route("/history/<type>")
+@login_required
+def history(type):
+    username = session["user_id"]
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+    organized_history = {}
+
+    if str(type) == "account":
+        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC", user_id, str(type).upper())
+        for record in records:
+            history = record['history']
+            time = record['time']
+            date_record = record['date']
+            date = history_date_format(date_record)
+        
+            if date in organized_history:
+                organized_history[date].append((history, time))
+            else:
+                organized_history[date] = [(history, time)]
+        return render_template("history.html", organized_history = organized_history)
+    
+    elif str(type) == "categories":
+        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC", user_id, str(type).upper())
+        for record in records:
+            history = record['history']
+            time = record['time']
+            date_record = record['date']
+            date = history_date_format(date_record)
+        
+            if date in organized_history:
+                organized_history[date].append((history, time))
+            else:
+                organized_history[date] = [(history, time)]
+        return render_template("history.html", organized_history = organized_history)
+    
+    elif str(type) == "post":
+        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC", user_id, str(type).upper())
+        for record in records:
+            history = record['history']
+            time = record['time']
+            date_record = record['date']
+            date = history_date_format(date_record)
+        
+            if date in organized_history:
+                organized_history[date].append((history, time))
+            else:
+                organized_history[date] = [(history, time)]
+        return render_template("history.html", organized_history = organized_history)
+
+
+
+
 
 if __name__ == '__main__':
       app.run(debug=True)

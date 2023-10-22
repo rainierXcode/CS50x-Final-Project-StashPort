@@ -4,26 +4,32 @@
     box-sizing: border-box;
 }
 
+:root{
+    --nav_height: 42px;
+    --sidebarwidth:300px;
+}
+
 
 .main-container-post{
     height: 100vh;
-    display: grid;
-    grid-template-columns: 4fr 1fr;
-    grid-template-rows: min-content 1fr;
     box-sizing: border-box;
+    background-color: green;
 
 }
 
 .nav{
-    grid-row-start: 1;
-    grid-row-end: 2;
-    grid-column-start: 1;
-    grid-column-end: 3;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 5px 10px 5px 5px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    z-index: 2;
+    top:0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-sizing: border-box;
 }
 
 .searchInput {
@@ -62,14 +68,15 @@
 
 
 .article{
-    grid-row-start: 2;
-    grid-row-end: 3;
-    grid-column-start: 1;
-    grid-column-end: 2;
+    margin-top: var(--nav_height);
     padding: 20px 30px 20px 30px;
     background-color: #F7ECE1;
     position: relative;
     box-sizing: border-box;
+    z-index: 0;
+    width: calc(100% - var(--sidebarwidth));
+    min-height: 100vh; 
+    overflow-y: auto;
 }
 
 .article-title{
@@ -83,11 +90,21 @@
 }
 
 .aside{
-    grid-row-start: 2;
-    grid-row-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
     grid-column-start: 2;
     grid-column-end: 3;
     padding: 10px;
+    position: fixed;
+    top: var(--nav_height);
+    bottom: 0;
+    right: 0;
+    width: var(--sidebarwidth);
+    z-index: 2;
+    background-color: #fff;
+    box-sizing: border-box;
+    box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.2);
+
 }
 
 
@@ -103,6 +120,10 @@
 .post-title{
     font-size: 18px;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 95%;
 }
 
 .post-title:hover{
@@ -152,7 +173,7 @@
 
 .main-post{
     width: 100%;
-    height: 100%;
+    height: calc(100vh - 100px);
     background-color: #8877;
     border-radius: 15px;
     padding: 20px;
@@ -219,6 +240,11 @@
 .main-post-description-text{
     font-size: 1.3rem;
     font-weight: 600;
+}
+
+.main-post-description-textbox textarea{
+    width: 100vw;
+    height: 100%;
 }
 
 .main-post-description-textbox textarea{
@@ -408,6 +434,17 @@
     border-radius: 5px;
   }
 
+  .other-latest-post{
+    background-color: #F7ECE1;
+    padding: 5px;
+    display: block;
+    text-decoration: none;
+  }
+
+  .other-latest-post:hover{
+    text-decoration: underline;
+    color: #000;
+  }
 
   @media (max-width: 768px) {
 
@@ -422,11 +459,12 @@
 
     .nav{
         width: 100vw;
+   
     }
 
     .article{
         width: 100vw;
-        padding: 0;
+        padding: 10px 15px 10px 15px;
     }
 
     .main-post-form {

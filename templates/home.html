@@ -16,10 +16,10 @@
   
     <div class="body-container">
       <header class="header">
-        <div class="header-top">
+        <form class="header-top">
           <label for="search" class="material-symbols-outlined"> search </label>
-          <input type="text" class="search" id="search" />
-        </div>
+          <input type="text" class="search" id="search" autocomplete="off" />
+        </form>
         <div class="header-down">
           <div class="header-down-left">
             <div>
@@ -27,7 +27,7 @@
             </div>
             <div>
               <div id="hi-there">Hi there,</div>
-              <div id="user-name">Rainier Sapin (@{{username}})</div>
+              <div id="user-name">{{full_name['full_name']}} (@{{username}})</div>
             </div>
           </div>
           <div class="header-down-right">
@@ -58,7 +58,7 @@
             </li>
           </a>
 
-          <a href="">
+          <a href="/history/post">
             <li class="icon-dash">
               <i class="material-symbols-outlined">history</i>
               <div class="dash-text">History</div>
@@ -107,7 +107,13 @@
               <div class="new-upload-box">
                 <div>New Uploads</div>
                 <div class="new-upload-post">
-                  
+
+                  {% for new_post in new_post_list %}
+                    <div class="new-upload-post-box">
+                      <a href="/home/folder/{{new_post['folder_name']}}/post/{{new_post['title_path']}}" target="_blank">{{new_post['title_name']}}</a>
+                    </div>
+
+                  {% endfor %}
                 </div>
               </div>
               
