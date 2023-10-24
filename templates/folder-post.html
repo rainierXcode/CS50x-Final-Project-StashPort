@@ -11,6 +11,7 @@
     rel="stylesheet"
     href="{{ url_for('static', filename='folder-post.css') }}"
   />
+  <script src="{{ url_for('static', filename='folder-post.js') }}" defer></script>
     <title>All Post</title>
   </head>
   <body>
@@ -29,8 +30,21 @@
       </div>
 
       <div class="nav-profile">
+
+      <div class="nav-profile-extend">
         <img src="{{ url_for('static', filename='images/rabbit.png') }}" alt="icon">
+
+        <div class="open-profile-box">
+          <div class="triangle"></div>
+          <div class="content">
+            Profile
+          </div>
+        </div>
+
       </div>
+
+    </div>
+
     </nav>
 
     <aside class="aside">

@@ -9,7 +9,7 @@ const article = document.querySelector(".article");
 const iconDash = document.querySelectorAll(".icon-dash");
 const iconDashboard = document.querySelector(".icon-dashboard");
 
-
+if(dashButton){
 dashButton.addEventListener('click', () => {
     dashText.forEach((text) => {
         text.classList.toggle('hide');
@@ -27,7 +27,29 @@ dashButton.addEventListener('click', () => {
     
     
 });
+}
 
+const uploadForm = document.querySelector("upload");
 
-const uploadForm = document.getElementById("upload");
+const profileClick = document.querySelector(".nav-profile img")
+const profileBox= document.querySelector(".open-profile-box");
 
+if (profileClick && profileBox) {
+    let isProfileBoxVisible = false;
+  
+    profileClick.addEventListener('click', () => {
+      if (!isProfileBoxVisible) {
+        profileBox.style.display = "block";
+        isProfileBoxVisible = true;
+      } else {
+        profileBox.style.display = "none";
+        isProfileBoxVisible = false;
+      }
+    });
+  }
+  
+  
+  
+  
+  
+  
