@@ -8,7 +8,12 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     />
     <link rel="stylesheet" href="../static/style.css" />
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='profile-box.css') }}"
+  />
     <script src="../static/dashboard.js" defer></script>
+    <script src="{{ url_for('static', filename='profile-box.js') }}" defer></script>
     <title>Home</title>
   </head>
   <body>
@@ -22,8 +27,8 @@
         </form>
         <div class="header-down">
           <div class="header-down-left">
-            <div>
-              <img src="../static/images/rabbit.png" alt="icon" />
+            <div class="home-avatar">
+              <img  src="{{ url_for('static', filename='avatars/' ~ current_avatar_path) }}" alt="icon" />
             </div>
             <div>
               <div id="hi-there">Hi there,</div>
@@ -51,12 +56,7 @@
             </li>
           </a>
 
-          <a href="">
-            <li class="icon-dash">
-              <i class="material-symbols-outlined">account_circle</i>
-              <div class="dash-text">Profile</div>
-            </li>
-          </a>
+        
 
           <a href="/history/post">
             <li class="icon-dash">
@@ -65,7 +65,7 @@
             </li>
           </a>
 
-          <a href="">
+          <a href="/unavailable/Settings%20Not%20Available" target="_blank">
             <li class="icon-dash">
               <i class="material-symbols-outlined">settings</i>
               <div class="dash-text">Settings</div>
@@ -92,7 +92,7 @@
               {% for folder in folder_list %}
               <a class="thumbnail-box" href="/home/folder/{{folder['folder_name']}}">
                 <img src="../static/folderimg/{{ folder['src_path'] }}" alt="">
-                <div>{{ folder['folder_name'] }}</div>
+                <div class="categories_name">{{ folder['folder_name'] }}</div>
               </a>
             {% endfor %}
             </div>
@@ -105,7 +105,7 @@
             <div class="side-content-article">
 
               <div class="new-upload-box">
-                <div>New Uploads</div>
+                <div class="new-upload-box-text">New Uploads</div>
                 <div class="new-upload-post">
 
                   {% for new_post in new_post_list %}
@@ -125,5 +125,37 @@
           
       </article>
     </div>
+
+
+    <div class="pick-avatar">
+      <div class="pick-avatar-header">
+        <div>Pick an Avatar</div>
+        <div class="material-symbols-outlined avatar-close">close</div>
+      </div>
+
+      <div  class="avatargrid">
+      <form  action="/home" method="POST">
+       {% for avatar_path in all_avatar_path %}
+
+       {% if avatar_path['avatarPath'] == current_avatar %}
+       <img src="{{ url_for('static', filename='avatars/' ~ avatar_path['avatarPath']) }}" alt="icon" data-avatar="{{avatar_path['avatarPath']}}" class="current_avatar" style="pointer-events: none;">
+       <input type="hidden" id="current_avatar" name="current_avatar" value="{{avatar_path['avatarName']}}">
+       {% else %}
+       <img src="{{ url_for('static', filename='avatars/' ~ avatar_path['avatarPath']) }}" alt="icon" data-avatar="{{avatar_path['avatarPath']}}">
+       {% endif %}
+      {% endfor %}
+       <input type="hidden" id="selected_avatar" name="selected_avatar" value="">
+   
+
+       <hr>
+       <div class="pick-avatar-button">
+          <button type="submit">Okay</button>
+       </div>
+      </form>
+     </div>
+
+   
+  </div>
+
   </body>
 </html>

@@ -11,30 +11,72 @@
     rel="stylesheet"
     href= "{{ url_for('static', filename='folder-post.css') }}"
   />
+  <link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='profile-box.css') }}"
+/>
   <script src= "{{ url_for('static', filename='tagFunction.js') }}" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.4.0/tagify.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.4.0/tagify.css">
   <script src="{{ url_for('static', filename='edit-main-post.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='folder-post.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='profile-box.js') }}" defer></script>
 
     <title>All Post</title>
   </head>
   <body>
     <div class="main-container-post">
     <nav class="nav">
-      <div class="searchInput">
+      <form class="searchInput" action="/search" method="GET">
         <label for="search"
           ><i class="material-symbols-outlined">Search</i></label
         >
-        <input type="text" id="search" autocomplete="off" />
-      </div>
+        <input type="text" id="search" name= "q" autocomplete="off" />
+      </form>
 
       <div class="middle-nav">
         <a href="/home"><i class="material-symbols-outlined icon">Home</i></a>
-        <a href=""><i class="material-symbols-outlined icon">History</i></a>
+        <a href="/history/post"><i class="material-symbols-outlined icon">History</i></a>
       </div>
-
       <div class="nav-profile">
-        <img src="{{ url_for('static', filename='images/rabbit.png') }}" alt="icon">
+
+        <div class="nav-profile-extend">
+          <div class="nav-profile-extend-box">
+          <img class="prof-img" src="{{ url_for('static', filename='avatars/' ~ current_avatar_path) }}" alt="icon">
+          <div>{{username}}</div>
+        </div>
+          <div class="open-profile-box">
+            <div class="triangle"></div>
+            <div class="content">
+               <div class="profile-box-profiletext">Profile</div>
+               <hr class="profile-boxline">
+  
+               <div class="profile-divide">
+  
+               <div class="profile-corner">
+                <img class="prof-imgBig"  src="{{ url_for('static', filename='avatars/' ~ current_avatar_path) }}"  alt="icon">
+                <div>edit</div>
+               </div>
+  
+               <div class="profile-status">
+  
+                  <div class="profile-status-post">
+                    <div>Upload Count: </div>
+                    <div>{{count_post}}</div>
+                  </div>
+  
+                  <div class="profile-status-category">
+                    <div>Category Count: </div>
+                    <div>{{count_categories}}</div>
+                  </div>
+  
+               </div>
+              </div>
+  
+              <div class="profile-box-logout"><a href="/logout">Logout</a></div>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
 
@@ -154,6 +196,36 @@
               </form>
         </div>
     </article>
+
+    <div class="pick-avatar">
+      <div class="pick-avatar-header">
+        <div>Pick an Avatar</div>
+        <div class="material-symbols-outlined avatar-close">close</div>
+      </div>
+
+      <div  class="avatargrid">
+      <form  action="/home/folder/Programming/post/AKOY-SAYO-IKAW-AY-AKIN-LAMANG-YHEY/update-avatar" method="POST">
+       {% for avatar_path in all_avatar_path %}
+
+       {% if avatar_path['avatarPath'] == current_avatar %}
+       <img src="{{ url_for('static', filename='avatars/' ~ avatar_path['avatarPath']) }}" alt="icon" data-avatar="{{avatar_path['avatarPath']}}" class="current_avatar" style="pointer-events: none;">
+       <input type="hidden" id="current_avatar" name="current_avatar" value="{{avatar_path['avatarName']}}">
+       {% else %}
+       <img src="{{ url_for('static', filename='avatars/' ~ avatar_path['avatarPath']) }}" alt="icon" data-avatar="{{avatar_path['avatarPath']}}">
+       {% endif %}
+      {% endfor %}
+       <input type="hidden" id="selected_avatar" name="selected_avatar" value="">
+   
+
+       <hr>
+       <div class="pick-avatar-button">
+          <button type="submit">Okay</button>
+       </div>
+      </form>
+     </div>
+
+   
+  </div>
   </div>
   </body>
 </html>

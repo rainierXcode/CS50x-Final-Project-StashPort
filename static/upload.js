@@ -62,39 +62,29 @@ const categoriesImg = document.querySelectorAll(".all_folder_image img");
 let haveInput = false;
 let haveImgSelect = false;
 
+let selectedImg = null;
+categoriesImg.forEach((img) => {
+  img.addEventListener("click", () => {
+    if (selectedImg !== null) {
+      selectedImg.classList.remove('select'); 
+    }
+    img.classList.add('select'); 
+    document.getElementById('selected_image').value = img.src;
+    selectedImg = img;
+    haveImgSelect = true; 
+    checkEnableButton(); 
+  });
+});
+
 if (folderInput != null) {
   folderInput.addEventListener("input", () => {
     if (folderInput.value.trim() !== "") {
-      haveInput = true;
-      checkEnableButton();
+      haveInput = true; 
     } else {
-      haveInput = false;
-      checkEnableButton();
+      haveInput = false; 
     }
+    checkEnableButton(); 
   });
-
-  let selectedImg = null;
-  categoriesImg.forEach((img) => {
-    img.addEventListener("click", () => {
-
-        if (selectedImg !== null) {
-            selectedImg.classList.remove('select'); 
-        }
-        img.classList.add('select'); 
-        document.getElementById('selected_image').value = img.src;
-        selectedImg = img; 
-
-      if (haveInput) {
-        haveImgSelect = true;
-        checkEnableButton();
-      }
-    });
-  });
-
-  
- 
-
-  
 
   function checkEnableButton() {
     if (haveInput && haveImgSelect) {
@@ -123,5 +113,4 @@ if (allErrorBox != null) {
     });
 
 }
-
 

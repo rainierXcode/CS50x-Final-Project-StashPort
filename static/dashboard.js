@@ -18,7 +18,7 @@ dashButton.addEventListener('click', () => {
     bodyContainer.classList.toggle('hide');
     sidebar.classList.toggle('hide');
     dashButton.classList.toggle('hide');
-    dashboardIcon.classList.toggle('hide');
+    dashboardIcon.classList.toggle('hide'); 
     header.classList.toggle('hide');
     article.classList.toggle('hide');
     iconDashboard.classList.toggle('hide');

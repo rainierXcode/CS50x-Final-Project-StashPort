@@ -20,6 +20,12 @@ href="{{ url_for('static', filename='history.css') }}"
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
   />
+  <link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='profile-box.css') }}"
+/>
+  <script src="../static/history-sidebar.js" defer></script>
+  <script src="{{ url_for('static', filename='profile-box.js') }}" defer></script>
 </head>
 <body>
     <div class="main-container-post">
@@ -32,14 +38,56 @@ href="{{ url_for('static', filename='history.css') }}"
         </div>
   
         <div class="middle-nav">
-          <a href="/history/post">Post</a>
-          <a href="/history/categories">Categories</a>
-          <a href="/history/account">Account</a>
+          {% for content in history_content %}
+          {% if content == history %}
+          <a  class="active-history"  href="/history/{{content}}">{{content | capitalize}}</a>
+          {% else %}
+          <a href="/history/{{content}}">{{content | capitalize}}</a>
+          {% endif %}
+          {% endfor %}
         </div>
   
         <div class="nav-profile">
-          <img src="{{ url_for('static', filename='images/rabbit.png') }}" alt="icon">
+
+          <div class="nav-profile-extend">
+            <div class="nav-profile-extend-box">
+            <img class="prof-img" src="{{ url_for('static', filename='avatars/' ~ current_avatar_path) }}" alt="icon">
+            <div>{{username}}</div>
+          </div>
+            <div class="open-profile-box open-profile-box-history">
+              <div class="triangle"></div>
+              <div class="content">
+                 <div class="profile-box-profiletext">Profile</div>
+                 <hr class="profile-boxline">
+    
+                 <div class="profile-divide">
+    
+                 <div class="profile-corner">
+                  <img class="prof-imgBig"  src="{{ url_for('static', filename='avatars/' ~ current_avatar_path) }}"  alt="icon">
+                  <div>edit</div>
+                 </div>
+    
+                 <div class="profile-status">
+    
+                    <div class="profile-status-post">
+                      <div>Upload Count: </div>
+                      <div>{{count_post}}</div>
+                    </div>
+    
+                    <div class="profile-status-category">
+                      <div>Category Count: </div>
+                      <div>{{count_categories}}</div>
+                    </div>
+    
+                 </div>
+                </div>
+    
+                <div class="profile-box-logout"><a href="/logout">Logout</a></div>
+              </div>
+            </div>
+          </div>
         </div>
+    
       </nav>
     <aside class="sidebar history-sidebar">
         <button class="dashboard-box">
@@ -57,13 +105,7 @@ href="{{ url_for('static', filename='history.css') }}"
             </li>
           </a>
 
-          <a href="">
-            <li class="icon-dash">
-              <i class="material-symbols-outlined">account_circle</i>
-              <div class="dash-text">Profile</div>
-            </li>
-          </a>
-
+      
           <a href="">
             <li class="icon-dash">
               <i class="material-symbols-outlined">history</i>
@@ -114,5 +156,35 @@ href="{{ url_for('static', filename='history.css') }}"
       </article>
 
       </div>
+
+      <div class="pick-avatar">
+        <div class="pick-avatar-header">
+          <div>Pick an Avatar</div>
+          <div class="material-symbols-outlined avatar-close">close</div>
+        </div>
+ 
+        <div  class="avatargrid">
+        <form  action="/history/{{history}}/update-avatar" method="POST">
+         {% for avatar_path in all_avatar_path %}
+ 
+         {% if avatar_path['avatarPath'] == current_avatar %}
+         <img src="{{ url_for('static', filename='avatars/' ~ avatar_path['avatarPath']) }}" alt="icon" data-avatar="{{avatar_path['avatarPath']}}" class="current_avatar" style="pointer-events: none;">
+         <input type="hidden" id="current_avatar" name="current_avatar" value="{{avatar_path['avatarName']}}">
+         {% else %}
+         <img src="{{ url_for('static', filename='avatars/' ~ avatar_path['avatarPath']) }}" alt="icon" data-avatar="{{avatar_path['avatarPath']}}">
+         {% endif %}
+        {% endfor %}
+         <input type="hidden" id="selected_avatar" name="selected_avatar" value="">
+     
+ 
+         <hr>
+         <div class="pick-avatar-button">
+            <button type="submit">Okay</button>
+         </div>
+        </form>
+       </div>
+ 
+     
+    </div>
 </body>
 </html>

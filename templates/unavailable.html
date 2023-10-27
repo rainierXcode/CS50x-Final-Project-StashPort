@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unavailable</title> 
+
+    <style>
+        .context{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+            width: 100vw;
+            height: 100vh;
+        }
+
+       
+
+        .context div{
+            font-size: 5rem;
+            font-style: italic;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .context div{
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="context">
+    <img src="{{ url_for('static', filename='images/unavailable.png')}}" alt="icon">
+    <div>{{text}}</div>
+</div>
+</body>
+</html>

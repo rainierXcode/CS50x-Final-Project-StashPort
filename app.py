@@ -169,8 +169,8 @@ def signUI():
 @login_required
 def home():
     username = session["user_id"]
-    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
-    folder_list = db.execute("SELECT f.folder_name, si.src_path FROM folders AS f JOIN src_img AS si ON f.folder_category_id = si.src_id WHERE f.user_id = ?",  user_id[0]["user_id"])
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+    folder_list = db.execute("SELECT f.folder_name, si.src_path FROM folders AS f JOIN src_img AS si ON f.folder_category_id = si.src_id WHERE f.user_id = ?",  user_id)
     query = """
     SELECT links.title_name, folders.folder_name, REPLACE(links.title_name, ' ', '-') AS title_path
     FROM links
@@ -178,9 +178,15 @@ def home():
     JOIN users ON folders.user_id = users.user_id
     WHERE users.user_id = ?
     """
-    new_post_list = db.execute(query, (user_id[0]["user_id"]))
-    full_name = db.execute("SELECT first_name || ' ' || last_name AS full_name FROM users WHERE user_id = ?", user_id[0]["user_id"] )
-    return render_template("home.html", username = username, folder_list = folder_list, new_post_list = new_post_list, full_name = full_name[0])
+    new_post_list = db.execute(query, (user_id))
+    full_name = db.execute("SELECT first_name || ' ' || last_name AS full_name FROM users WHERE user_id = ?", user_id)
+    current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+
+    all_avatar_path = all_avatar_path = db.execute("SELECT avatarPath FROM src_avatar")
+    current_avatar = db.execute("SELECT avatar.avatarPath FROM src_avatar AS avatar JOIN users ON users.avatarID = avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+    current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+
+    return render_template("home.html", username = username, folder_list = folder_list, new_post_list = new_post_list, full_name = full_name[0], current_avatar_path = current_avatar_path,  all_avatar_path = all_avatar_path, current_avatar = current_avatar)
 
 
 @app.route("/logout")
@@ -213,6 +219,7 @@ def upload():
     link_value = None
     description_value = None
     tags_value = None
+    
 
     all_error = []
 
@@ -223,6 +230,17 @@ def upload():
     for folder in folders:
         folders_list.append(folder["folder_name"])
 
+    
+    latest_category = db.execute("SELECT folder_name FROM folders WHERE user_id = ? ORDER BY folder_id DESC LIMIT 1", user_id)[0]['folder_name']
+
+    count_post = db.execute("SELECT COUNT(links.title_name) AS count FROM links JOIN folders  ON links.folder_id = folders.folder_id WHERE folders.user_id = ?", user_id)[0]['count']
+    count_categories = db.execute("SELECT COUNT(folder_name) AS count FROM folders WHERE user_id = ?", user_id)[0]['count']
+
+        
+    all_avatar_path = all_avatar_path = db.execute("SELECT avatarPath FROM src_avatar")
+    current_avatar = db.execute("SELECT avatar.avatarPath FROM src_avatar AS avatar JOIN users ON users.avatarID = avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+    other_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE folders.user_id = ? ORDER BY folders.folder_id DESC LIMIT 5", user_id)
+    current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
 
 
     if request.method == "POST":
@@ -285,7 +303,7 @@ def upload():
             description_value = description
             tags_value =tags
 
-            return render_template("upload.html", folders = folders_list, all_errors=all_error, folder_value = folder_value, title_value = title_value, link_value = link_value, description_value = description_value, tags_value = tags_value, username = username)
+            return render_template("upload.html", folders = folders_list, all_errors=all_error, folder_value = folder_value, title_value = title_value, link_value = link_value, description_value = description_value, tags_value = tags_value, username = username, latest_category = latest_category, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
         
         else:
             folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_choice, user_id)
@@ -298,7 +316,7 @@ def upload():
             db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
             return redirect("/home")
                   
-    return render_template("upload.html", folders = folders_list, username = username)
+    return render_template("upload.html", folders = folders_list, username = username, latest_category = latest_category, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
 
 
 
@@ -313,6 +331,8 @@ def addFolder():
         folder_category_id = extractNum(img_select)
         
         user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+        global have_new_category
+        have_new_category = True
         db.execute("INSERT INTO folders(folder_category_id, folder_name, user_id) VALUES(? ,?, ?)",  folder_category_id, new_folder_name, user_id)
         date = database_date_format(getDate())
         history = f'Established a new category named "{new_folder_name}."'
@@ -334,24 +354,15 @@ def folder(folder_name):
         title_path_list = getTitlePath(post_contents)
         title_data = list_of_dict_title_data(post_contents, title_path_list)
 
+        count_post = db.execute("SELECT COUNT(links.title_name) AS count FROM links JOIN folders  ON links.folder_id = folders.folder_id WHERE folders.user_id = ?", user_id)[0]['count']
+        count_categories = db.execute("SELECT COUNT(folder_name) AS count FROM folders WHERE user_id = ?", user_id)[0]['count']
 
+        
+        all_avatar_path = all_avatar_path = db.execute("SELECT avatarPath FROM src_avatar")
+        current_avatar = db.execute("SELECT avatar.avatarPath FROM src_avatar AS avatar JOIN users ON users.avatarID = avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
         other_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE folders.user_id = ? ORDER BY folders.folder_id DESC LIMIT 5", user_id)
-        return render_template("folder-post.html", post_contents = title_data, other_folders = other_folders, current_folder = folder_name)
-
-
-@app.route("/home/folder/<folder_name>/delete-post/<title>")
-@login_required
-def deletePost(folder_name, title):
-    username = session["user_id"]
-    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
-    folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)[0]["folder_id"]
-    db.execute("DELETE FROM links WHERE folder_id = ? AND title_name = ?", folder_id, title)
-    date = database_date_format(getDate())
-    history = f'Deleted a post titled "{title}" under the "{folder_name}" category.'
-    history_type = "POST"
-    time = getTime()
-    db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
-    return redirect(url_for('folder', folder_name=folder_name))
+        current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+        return render_template("folder-post.html", username=username,post_contents = title_data, other_folders = other_folders, current_folder = folder_name, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
 
 
 @app.route("/home/folder/<folder_name>/post/<title>", methods=["GET", "POST"])
@@ -378,6 +389,15 @@ def viewPost(folder_name, title):
     date = database_date_format(getDate())
     time = getTime()
     history_type = "POST"
+
+    count_post = db.execute("SELECT COUNT(links.title_name) AS count FROM links JOIN folders  ON links.folder_id = folders.folder_id WHERE folders.user_id = ?", user_id)[0]['count']
+    count_categories = db.execute("SELECT COUNT(folder_name) AS count FROM folders WHERE user_id = ?", user_id)[0]['count']
+
+        
+    all_avatar_path = all_avatar_path = db.execute("SELECT avatarPath FROM src_avatar")
+    current_avatar = db.execute("SELECT avatar.avatarPath FROM src_avatar AS avatar JOIN users ON users.avatarID = avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+    other_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE folders.user_id = ? ORDER BY folders.folder_id DESC LIMIT 5", user_id)
+    current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
    
     if request.method == "POST":
 
@@ -423,7 +443,52 @@ def viewPost(folder_name, title):
         return redirect(f'/home/folder/{form_folder}/post/{path_title}')
 
     
-    return render_template("post.html", title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list, other_latest_post = other_latest_post)
+    return render_template("post.html", username = username,title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list, other_latest_post = other_latest_post, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
+
+
+
+@app.route("/home/folder/<folder_name>/update-avatar", methods=["GET", "POST"])
+@app.route("/home/folder/<folder_name>/post/<title>/update-avatar", methods=["GET", "POST"])
+@app.route("/home/<upload>/update-avatar", methods=['GET', 'POST'])
+@app.route("/history/<history>/update-avatar", methods=['GET', 'POST'])
+@app.route("/home", methods=["GET", "POST"])
+@login_required
+def updateProfileInFolder(folder_name = None, title = None, search_query = None, upload=None , history = None):
+    if request.method == "POST":
+        avatar_select = request.form.get("selected_avatar")
+        username = session["user_id"]
+        user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+        db.execute("UPDATE users SET avatarID = (SELECT src_avatar.avatarID  FROM src_avatar WHERE src_avatar.avatarPath = ? ) WHERE user_id = ?", avatar_select, user_id)
+        if folder_name is not None and title is None:
+            return redirect(url_for('folder', folder_name=folder_name))
+        elif folder_name is not None and title is not None:
+            return redirect(url_for('viewPost', folder_name=folder_name, title=title))
+        
+        elif upload is not None and upload == "upload":
+            return redirect(url_for('upload'))
+        
+        elif history is not None:
+            return redirect(url_for('history', type=history))
+        else:
+            return redirect("/home")
+
+
+
+    
+
+@app.route("/home/folder/<folder_name>/delete-post/<title>")
+@login_required
+def deletePost(folder_name, title):
+    username = session["user_id"]
+    user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+    folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)[0]["folder_id"]
+    db.execute("DELETE FROM links WHERE folder_id = ? AND title_name = ?", folder_id, title)
+    date = database_date_format(getDate())
+    history = f'Deleted a post titled "{title}" under the "{folder_name}" category.'
+    history_type = "POST"
+    time = getTime()
+    db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
+    return redirect(url_for('folder', folder_name=folder_name))
 
 
 
@@ -433,6 +498,15 @@ def history(type):
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
     organized_history = {}
+
+    count_post = db.execute("SELECT COUNT(links.title_name) AS count FROM links JOIN folders  ON links.folder_id = folders.folder_id WHERE folders.user_id = ?", user_id)[0]['count']
+    count_categories = db.execute("SELECT COUNT(folder_name) AS count FROM folders WHERE user_id = ?", user_id)[0]['count']
+
+    all_avatar_path = all_avatar_path = db.execute("SELECT avatarPath FROM src_avatar")
+    current_avatar = db.execute("SELECT avatar.avatarPath FROM src_avatar AS avatar JOIN users ON users.avatarID = avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+    current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+
+    history_content = ['post', 'categories', 'account']
 
     if str(type) == "account":
         records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC, history_id DESC", user_id, str(type).upper())
@@ -446,7 +520,8 @@ def history(type):
                 organized_history[date].append((history, time))
             else:
                 organized_history[date] = [(history, time)]
-        return render_template("history.html", organized_history = organized_history)
+        history = "account"
+        return render_template("history.html",history = history,history_content = history_content, username = username,organized_history = organized_history, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
     
     elif str(type) == "categories":
         records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC, history_id DESC", user_id, str(type).upper())
@@ -460,7 +535,8 @@ def history(type):
                 organized_history[date].append((history, time))
             else:
                 organized_history[date] = [(history, time)]
-        return render_template("history.html", organized_history = organized_history)
+        history = "categories"
+        return render_template("history.html",history = history,history_content = history_content,username = username, organized_history = organized_history,count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
     
     elif str(type) == "post":
         records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC, history_id DESC", user_id, str(type).upper())
@@ -474,25 +550,55 @@ def history(type):
                 organized_history[date].append((history, time))
             else:
                 organized_history[date] = [(history, time)]
-        return render_template("history.html", organized_history = organized_history)
+        history = "post"
+        return render_template("history.html",history=history, history_content = history_content,username = username,organized_history = organized_history, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
 
 
-@app.route("/search", methods=["GET"])
+@app.route("/search", methods=["GET", "POST"])
 @login_required
 def search():
+
+  
+       
+
+
     search_query = request.args.get("q")
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
-    search_result = db.execute(
-    "SELECT links.title_name, folder_category , REPLACE(title_name, ' ', '-') AS title_path FROM links "
-    "JOIN folders ON folders.folder_id = links.folder_id "
-    "JOIN users ON folders.user_id = users.user_id "
-    "WHERE title_name LIKE ? OR description LIKE ? AND users.user_id = ?",
-    '%' + search_query + '%', '%' + search_query + '%', user_id
-)
-    newest_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE user_id = ? ORDER BY folder_id DESC", user_id)
 
-    return render_template("search.html", search_result = search_result, newest_folders = newest_folders)
+    sql_query = """
+    SELECT links.title_name, links.folder_category, REPLACE(title_name, ' ', '-') AS title_path
+    FROM links
+    JOIN folders ON folders.folder_id = links.folder_id
+    JOIN users ON folders.user_id = users.user_id
+    WHERE title_name LIKE '%' || ? || '%' AND users.user_id = ?;
+    """
+    search_result = db.execute(sql_query, search_query, user_id)
+    newest_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE user_id = ? ORDER BY folder_id DESC", user_id)
+    
+    count_post = db.execute("SELECT COUNT(links.title_name) AS count FROM links JOIN folders  ON links.folder_id = folders.folder_id WHERE folders.user_id = ?", user_id)[0]['count']
+    count_categories = db.execute("SELECT COUNT(folder_name) AS count FROM folders WHERE user_id = ?", user_id)[0]['count']
+
+    all_avatar_path = all_avatar_path = db.execute("SELECT avatarPath FROM src_avatar")
+    current_avatar = db.execute("SELECT avatar.avatarPath FROM src_avatar AS avatar JOIN users ON users.avatarID = avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+    current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+
+    if request.method == "POST":
+        avatar_select = request.form.get("selected_avatar")
+        username = session["user_id"]
+        user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+        db.execute("UPDATE users SET avatarID = (SELECT src_avatar.avatarID  FROM src_avatar WHERE src_avatar.avatarPath = ? ) WHERE user_id = ?", avatar_select, user_id)
+        current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+        return render_template("search.html",username=username, search_result = search_result,  search_query = search_query ,newest_folders = newest_folders,  count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
+
+    return render_template("search.html",username=username, search_result = search_result,  search_query = search_query ,newest_folders = newest_folders,  count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
+
+
+
+@app.route("/unavailable/<text>")
+def unavailableThis(text):
+    return render_template("unavailable.html", text=text)
+
 
 if __name__ == '__main__':
       app.run(debug=True)

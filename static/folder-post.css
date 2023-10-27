@@ -6,7 +6,7 @@
 
 
 :root{
-    --nav_height: 42px;
+    --nav_height: 45px;
     --sidebarwidth:300px;
 }
 
@@ -14,7 +14,7 @@
 .main-container-post{
     height: 100vh;
     box-sizing: border-box;
-    background-color: green;
+    background-color: #000;
 
 }
 
@@ -22,15 +22,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 10px 5px 5px;
+    padding: 0px 20px 0px 20px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
     position: fixed;
     z-index: 2;
     top:0;
     left: 0;
     width: 100%;
-    background-color: #fff;
+    background-color: #FF6600;
     box-sizing: border-box;
+    height: var(--nav_height);
 }
 
 .searchInput {
@@ -46,7 +47,7 @@
   #search{
     border-radius: 15px;
     border: 2px solid lightgray;;
-    background-color:  lightgray;
+    background-color:  #fff;
     padding: 3px 5px;
   }
 
@@ -62,42 +63,16 @@
     flex: 1;
     display: flex;
     justify-content: flex-end;
+    height: 100%;
   }
 
-  .nav-profile-extend{
-    position: relative;
-  }
-
-  .open-profile-box {
-    display: none;
-    top:40px;
-    position: absolute;
-    right: 3px;
-    width: 300px; 
-    background-color: #3498db;
-    padding: 15px;
-    color: #fff; 
-  }
-
-  .triangle {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent; 
-    border-right: 15px solid transparent; 
-    border-bottom: 10px solid #3498db; 
-    top: -10px;
-    right: 0;
-    transform: translateX(0); 
-  }
-  
   
 
 
 .article{
     margin-top: var(--nav_height);
     padding: 20px 30px 20px 30px;
-    background-color: #F7ECE1;
+    background-color: #fff;
     position: relative;
     box-sizing: border-box;
     z-index: 0;
@@ -137,7 +112,7 @@
 
 .box-post{
     width: 100%;
-    background-color: #fff;
+    background-color: #F7ECE1;
     margin-bottom: 10px;
     padding: 15px 10px 15px 10px;
     position: relative;
