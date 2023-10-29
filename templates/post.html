@@ -22,7 +22,7 @@
   <script src="{{ url_for('static', filename='folder-post.js') }}" defer></script>
   <script src="{{ url_for('static', filename='profile-box.js') }}" defer></script>
 
-    <title>All Post</title>
+    <title>Post</title>
   </head>
   <body>
     <div class="main-container-post">
@@ -82,12 +82,12 @@
 
     <aside class="aside">
  
-      <div class="my-collection-title">Latest {{folder_name}} Post</div>
+      <div class="my-collection-title">Other Latest {{folder_name}} Post</div>
 
       <div class="other-latest-post-box">
 
         {% for post in other_latest_post %}
-             <a class="other-latest-post" href="">
+             <a class="other-latest-post" href="/home/">
               {{post['title_name']}}
              </a>
         {% endfor %}
@@ -100,10 +100,16 @@
             <button  class="main-post-edit-button" onclick="editPost()"><i class="material-symbols-outlined">edit</i></button>
             <div class="main-post-title">{{title_name}}</div>
             <div class="main-post-tags">
+
+              {% for tag in all_tags %}
+              <div class="post-tag-box">
                 <i class="material-symbols-outlined tags">sell</i>
-                <div>Coding</div>
-                <i class="material-symbols-outlined tags">sell</i>
-                <div>Codes</div>
+                <div class="post_tag">{{tag['tag_name']}}</div>
+              </div>
+              {% endfor %}
+
+              
+               
             </div>
 
             <div class="main-post-link">
@@ -177,7 +183,7 @@
                         autocomplete="off"
                         autofocus
                         autocapitalize="on"
-                        value=""
+                        value="{{tag_separation}}"
                         id= "tags"
                       />
                     </div>
@@ -204,7 +210,7 @@
       </div>
 
       <div  class="avatargrid">
-      <form  action="/home/folder/Programming/post/AKOY-SAYO-IKAW-AY-AKIN-LAMANG-YHEY/update-avatar" method="POST">
+      <form  action="/home/folder/{{folder_path}}/post/{{title_path}}/update-avatar" method="POST">
        {% for avatar_path in all_avatar_path %}
 
        {% if avatar_path['avatarPath'] == current_avatar %}

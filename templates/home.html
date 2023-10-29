@@ -90,7 +90,7 @@
             <div class="thumbnail-article">
 
               {% for folder in folder_list %}
-              <a class="thumbnail-box" href="/home/folder/{{folder['folder_name']}}">
+              <a class="thumbnail-box" href="/home/folder/{{folder['folder_path']}}">
                 <img src="../static/folderimg/{{ folder['src_path'] }}" alt="">
                 <div class="categories_name">{{ folder['folder_name'] }}</div>
               </a>

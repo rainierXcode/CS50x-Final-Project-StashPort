@@ -4,6 +4,7 @@ from helper import *
 from cs50 import SQL
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
+import json
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -170,13 +171,17 @@ def signUI():
 def home():
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
-    folder_list = db.execute("SELECT f.folder_name, si.src_path FROM folders AS f JOIN src_img AS si ON f.folder_category_id = si.src_id WHERE f.user_id = ?",  user_id)
+    folder_list = db.execute(
+    "SELECT f.folder_name, si.src_path, REPLACE(f.folder_name, ' ', '_') AS folder_path FROM folders AS f JOIN src_img AS si ON f.folder_category_id = si.src_id WHERE f.user_id = ?",
+    user_id
+)
+
     query = """
     SELECT links.title_name, folders.folder_name, REPLACE(links.title_name, ' ', '-') AS title_path
     FROM links
     JOIN folders ON links.folder_id = folders.folder_id
     JOIN users ON folders.user_id = users.user_id
-    WHERE users.user_id = ?
+    WHERE users.user_id = ? ORDER BY links.link_id DESC
     """
     new_post_list = db.execute(query, (user_id))
     full_name = db.execute("SELECT first_name || ' ' || last_name AS full_name FROM users WHERE user_id = ?", user_id)
@@ -231,7 +236,10 @@ def upload():
         folders_list.append(folder["folder_name"])
 
     
-    latest_category = db.execute("SELECT folder_name FROM folders WHERE user_id = ? ORDER BY folder_id DESC LIMIT 1", user_id)[0]['folder_name']
+    latest_category = db.execute("SELECT folder_name FROM folders WHERE user_id = ? ORDER BY folder_id DESC LIMIT 1", user_id)
+
+    if latest_category is not None and len(latest_category) > 0:
+        latest_category = latest_category[0]['folder_name']
 
     count_post = db.execute("SELECT COUNT(links.title_name) AS count FROM links JOIN folders  ON links.folder_id = folders.folder_id WHERE folders.user_id = ?", user_id)[0]['count']
     count_categories = db.execute("SELECT COUNT(folder_name) AS count FROM folders WHERE user_id = ?", user_id)[0]['count']
@@ -249,25 +257,39 @@ def upload():
         link = request.form.get("link")
         description  = request.form.get("description")
         tags = request.form.get("tags")
+
+
     
 
         if folder_choice == None:
             error_message_folder = "Folder named folder is not available"
             all_error.append(error_message_folder)
-            
 
+        elif '_' in folder_choice:
+            error_message_folder = "Using an underscore in Category is prohibited."
+            all_error.append(error_message_folder)
+        
 
         if title == "":
             error_message_title = "Title cannot be empty"
+            all_error.append(error_message_title)
+        
+        elif '_' in title:
+            error_message_title = "Using an underscore in Title is prohibited."
             all_error.append(error_message_title)
 
         elif link_verifier(title):
             error_message_title = "Title must not be an URL"
             all_error.append(error_message_title)
+
          
 
         elif len(title) < 5:
             error_message_title = "Title must be 5 characters above"
+            all_error.append(error_message_title)
+
+        elif userTitleAlreadyUse(title, folder_choice):
+            error_message_title = "You already used this title in this category."
             all_error.append(error_message_title)
         
         if link == "":
@@ -302,6 +324,7 @@ def upload():
             link_value =link
             description_value = description
             tags_value =tags
+            latest_category = folder_value
 
             return render_template("upload.html", folders = folders_list, all_errors=all_error, folder_value = folder_value, title_value = title_value, link_value = link_value, description_value = description_value, tags_value = tags_value, username = username, latest_category = latest_category, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
         
@@ -314,6 +337,31 @@ def upload():
             history_type = "POST"
             time = getTime()
             db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
+            link_id = db.execute("SELECT MAX(link_id) AS id FROM links")[0]['id']
+
+            tag_num  = db.execute("SELECT tag_id FROM tags")
+            if len(tags) > 0:
+                tags_result = json.loads(tags)
+                tags_result = removeDuplicateList(tags_result)
+                for tag in tags_result:
+                    tag_value = tag['value']
+
+                    if len(tag_num )==0:
+                        db.execute("INSERT INTO tags(tag_name) VALUES(?)", tag_value)
+                        tag_num  = db.execute("SELECT tag_id FROM tags")
+                        tag_id = db.execute("SELECT tag_id FROM tags WHERE tag_name = ?", tag_value)[0]['tag_id']
+                    else:
+                        if tagsExist(tag_value):
+                            tag_id = db.execute("SELECT tag_id FROM tags WHERE tag_name = ?", tag_value)[0]['tag_id']
+                            
+                        
+                        else:
+                            db.execute("INSERT INTO tags(tag_name) VALUES(?)", tag_value)
+                            tag_id = db.execute("SELECT tag_id FROM tags WHERE tag_name = ?", tag_value)[0]['tag_id']
+                    db.execute("INSERT INTO PostTag(link_id, tag_id, user_id) VALUES(?, ?, ?)", link_id, tag_id, user_id)
+                        
+                    
+          
             return redirect("/home")
                   
     return render_template("upload.html", folders = folders_list, username = username, latest_category = latest_category, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
@@ -347,10 +395,12 @@ def addFolder():
 @app.route("/home/folder/<folder_name>")
 @login_required
 def folder(folder_name):
+        folder_name = str(folder_name)
+        folder_name =folder_name.replace("_", " ")
         username = session["user_id"]
         user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
         folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)
-        post_contents = db.execute("SELECT title_name FROM links WHERE folder_id = ?", folder_id[0]["folder_id"])
+        post_contents = db.execute("SELECT title_name FROM links WHERE folder_id = ? ORDER BY link_id DESC", folder_id[0]["folder_id"])
         title_path_list = getTitlePath(post_contents)
         title_data = list_of_dict_title_data(post_contents, title_path_list)
 
@@ -362,12 +412,15 @@ def folder(folder_name):
         current_avatar = db.execute("SELECT avatar.avatarPath FROM src_avatar AS avatar JOIN users ON users.avatarID = avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
         other_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE folders.user_id = ? ORDER BY folders.folder_id DESC LIMIT 5", user_id)
         current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+        folder_name = folder_name.replace(" ", "_")
         return render_template("folder-post.html", username=username,post_contents = title_data, other_folders = other_folders, current_folder = folder_name, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
 
 
 @app.route("/home/folder/<folder_name>/post/<title>", methods=["GET", "POST"])
 @login_required
 def viewPost(folder_name, title):
+    folder_name = str(folder_name)
+    folder_name = folder_name.replace("_", " ")
     path_title = title
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)
@@ -378,13 +431,17 @@ def viewPost(folder_name, title):
 
 
 
-    title_name = title.replace("-", " ")
+    title_name = title.replace("_", " ")
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
+
     folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)[0]["folder_id"]
     folder_id = int(folder_id)
     title_name = str(title_name)
     post_contents = db.execute("SELECT title_name, link_url, description FROM links  WHERE folder_id = ? AND title_name = ? ", folder_id, title_name)[0]
-    other_latest_post = db.execute("SELECT links.title_name FROM links JOIN folders ON links.folder_id = folders.folder_id JOIN users ON folders.user_id = users.user_id WHERE users.user_id = ? AND links.title_name != ?",  user_id, title_name)
+    other_latest_post = db.execute("SELECT links.title_name FROM links JOIN folders ON links.folder_id = folders.folder_id JOIN users ON folders.user_id = users.user_id WHERE users.user_id = ? AND links.title_name != ? AND folders.folder_name = ? ORDER BY links.link_id DESC LIMIT 15",  user_id, title_name, folder_name)
+
+    title_path_list = getTitlePath(other_latest_post)
+    title_data = list_of_dict_title_data(other_latest_post, title_path_list)
     
     date = database_date_format(getDate())
     time = getTime()
@@ -399,6 +456,11 @@ def viewPost(folder_name, title):
     other_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE folders.user_id = ? ORDER BY folders.folder_id DESC LIMIT 5", user_id)
     current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN  users ON users.avatarID = src_avatar.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
    
+    link_id = db.execute("SELECT DISTINCT(links.link_id) AS link_id FROM links  JOIN folders ON folders.folder_name = links.folder_category JOIN users ON folders.user_id = users.user_id WHERE folders.folder_name = ? AND links.title_name = ? AND users.user_id = ?", folder_name, title_name, user_id)[0]['link_id']
+    all_tags = db.execute("SELECT tags.tag_name, tags.tag_id FROM tags JOIN PostTag ON PostTag.tag_id = tags.tag_id JOIN links ON links.link_id = PostTag.link_id WHERE links.link_id = ?", link_id)
+
+    tag_separation = getTagSeperation(all_tags)
+
     if request.method == "POST":
 
        
@@ -406,8 +468,10 @@ def viewPost(folder_name, title):
         form_folder = request.form.get('folders')
         form_link = request.form.get('link')
         form_description = request.form.get('description')
+        form_tags = request.form.get("tags")
+        form_title = form_title.replace(" ", "_")
 
-        form_title = form_title.replace(" ", "-")
+        tag_num  = db.execute("SELECT tag_id FROM tags")
 
 
         date = database_date_format(getDate())
@@ -416,21 +480,21 @@ def viewPost(folder_name, title):
 
        
         if form_title != title_name:
-            form_title = form_title.replace("-", " ")
-            path_title = form_title.replace(" ", "-")
-            db.execute("UPDATE links SET title_name = ? WHERE folder_id = ?", form_title, folder_id)
+            form_title = form_title.replace("_", " ")
+            path_title = form_title.replace(" ", "_")
+            db.execute("UPDATE links SET title_name = ? WHERE folder_id = ? AND link_id = ?", form_title, folder_id, link_id)
             history = f'Edited the post title "{title_name}" to "{form_title}" under the "{folder_name}" category.'
             db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
 
         
         if post_contents['link_url'] != form_link:
-            db.execute("UPDATE links SET link_url = ? WHERE folder_id = ?", form_link, folder_id)
+            db.execute("UPDATE links SET link_url = ? WHERE folder_id = ?  AND link_id = ?", form_link, folder_id, link_id)
             history = f'Updated the link with the title "{form_title}" in the "{folder_name}" category.'
             db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
 
 
         if post_contents['description'] != form_description:
-            db.execute("UPDATE links SET description = ? WHERE folder_id = ?", form_description, folder_id)
+            db.execute("UPDATE links SET description = ? WHERE folder_id = ?  AND link_id = ?", form_description, folder_id, link_id)
             history = f'Updated the description with the title "{form_title}" in the "{folder_name}" category.'
             db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
         
@@ -439,11 +503,76 @@ def viewPost(folder_name, title):
             db.execute("UPDATE links SET folder_category = ?, folder_id = ? WHERE folder_id = ? AND title_name = ?", form_folder , new_folder_id, folder_id, title_name)
             history = f'Moved the post titled "{form_title}" to the "{form_folder}" category.'
             db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
+
+        
+        if len(form_tags) > 0:
+            tags_result = json.loads(form_tags)
+
+
+            for form in tags_result:
+                form_value = form['value']
+
+                if not tagsExist(form_value):
+                    db.execute("INSERT into tags(tag_name) VALUES(?)", form_value)
+
+            if len(tags_result) == len(all_tags):
+                for tag, form in zip(all_tags, tags_result):
+                    form_value = form['value']
+                    tag_value = tag['tag_name']
+
+                    if form_value != tag_value:
+                        tag_id = db.execute("SELECT tag_id FROM tags WHERE tag_name = ?", form_value)[0]['tag_id']
+                        PostTagID = db.execute("SELECT PostTag.ID  FROM PostTag JOIN links ON links.link_id = PostTag.link_id  JOIN tags ON tags.tag_id = PostTag.tag_id WHERE PostTag.user_id = ? AND links.title_name = ? AND tags.tag_name = ?", user_id, title_name, tag_value)[0]['ID']
+                        db.execute("UPDATE PostTag SET tag_id = ? WHERE ID = ?", tag_id, PostTagID)
+
+            elif  len(tags_result) > len(all_tags):
+                for prev, latest in zip(all_tags, tags_result):
+                    previous_tag = prev['tag_name']
+                    latest_tag = latest['value']
+                    if previous_tag != latest_tag:
+                        PostTagID = db.execute("SELECT PostTag.ID  FROM PostTag JOIN links ON links.link_id = PostTag.link_id  JOIN tags ON tags.tag_id = PostTag.tag_id WHERE PostTag.user_id = ? AND links.title_name = ? AND tags.tag_name = ?", user_id, title_name, previous_tag)[0]['ID']
+                        tag_id = db.execute("SELECT tag_id FROM tags WHERE tag_name = ?", latest_tag)[0]['tag_id']
+                        db.execute("UPDATE PostTag SET tag_id = ? WHERE ID = ?", tag_id, PostTagID)
+                        
+
+                for i in range(len(all_tags), len(tags_result)):
+                    form_value = tags_result[i]['value']
+                    tag_id = db.execute("SELECT tag_id FROM tags WHERE tag_name = ?", form_value)[0]['tag_id']
+                    db.execute("INSERT INTO PostTag(link_id, tag_id, user_id) VALUES(?, ?, ?)", link_id, tag_id, user_id)
+
+            elif len(all_tags) > len(tags_result):
+                tagIdList = []
+
+                for tag in tags_result:
+                    tag_value = tag['value']
+                    tag_id = db.execute("SELECT tag_id FROM tags WHERE tag_name = ?", tag_value)[0]['tag_id']
+                    tagIdList.append(tag_id)
+
+                for prev, latest in zip(all_tags, tags_result):
+                    previous_tag = prev['tag_name']
+                    latest_tag = latest['value']
+
+                    if previous_tag != latest_tag:
+                        PostTagID = db.execute("SELECT PostTag.ID  FROM PostTag JOIN links ON links.link_id = PostTag.link_id  JOIN tags ON tags.tag_id = PostTag.tag_id WHERE PostTag.user_id = ? AND links.title_name = ? AND tags.tag_name = ?", user_id, title_name, previous_tag)[0]['ID']
+                        tag_id = db.execute("SELECT tag_id FROM tags WHERE tag_name = ?", latest_tag)[0]['tag_id']
+                        db.execute("UPDATE PostTag SET tag_id = ? WHERE ID = ?", tag_id, PostTagID)
+                
+               
+                result = tuple(tagIdList) 
+                db.execute("DELETE FROM PostTag WHERE link_id = ? AND tag_id NOT IN (?)", link_id, result)
+               
+
+        else:
+            db.execute("DELETE FROM PostTag WHERE link_id = (SELECT link_id FROM links WHERE title_name = ?)", title_name)
+
+
+                        
             
         return redirect(f'/home/folder/{form_folder}/post/{path_title}')
 
-    
-    return render_template("post.html", username = username,title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list, other_latest_post = other_latest_post, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
+    folder_path = folder_name.replace(" ", "_")
+    title_path = title_name.replace(" ", "_")
+    return render_template("post.html", username = username,title_name = title_name, post_contents = post_contents, folder_name = folder_name, folders = folders_list, other_latest_post = title_data, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path, current_folder = folder_name, all_tags = all_tags, tag_separation = tag_separation, folder_path =folder_path, title_path = title_path)
 
 
 
@@ -479,10 +608,16 @@ def updateProfileInFolder(folder_name = None, title = None, search_query = None,
 @app.route("/home/folder/<folder_name>/delete-post/<title>")
 @login_required
 def deletePost(folder_name, title):
+    folder_name = str(folder_name)
+    folder_name = folder_name.replace("_", " ")
+    title_name = str(title)
+    title_name = title_name.replace("_", " ")
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
     folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", folder_name, user_id)[0]["folder_id"]
-    db.execute("DELETE FROM links WHERE folder_id = ? AND title_name = ?", folder_id, title)
+    link_id = db.execute("SELECT links.link_id FROM links  JOIN folders  ON folders.folder_id = links.folder_id WHERE links.title_name = ?  AND links.folder_category = ?  AND folders.user_id = ?", title_name, folder_name, user_id)[0]['link_id']
+    db.execute("DELETE FROM PostTag WHERE link_id = ?", link_id)
+    db.execute("DELETE FROM links WHERE folder_id = ? AND title_name = ?", folder_id, title_name)
     date = database_date_format(getDate())
     history = f'Deleted a post titled "{title}" under the "{folder_name}" category.'
     history_type = "POST"
@@ -571,9 +706,29 @@ def search():
     FROM links
     JOIN folders ON folders.folder_id = links.folder_id
     JOIN users ON folders.user_id = users.user_id
-    WHERE title_name LIKE '%' || ? || '%' AND users.user_id = ?;
-    """
-    search_result = db.execute(sql_query, search_query, user_id)
+    WHERE (
+        title_name LIKE '%' || ? || '%' OR title_name IN (
+            SELECT title_name FROM links
+            JOIN PostTag ON PostTag.link_id = links.link_id
+            JOIN tags ON tags.tag_id = PostTag.tag_id
+            WHERE tags.tag_name LIKE '%' || ? || '%'
+        )
+    ) AND users.user_id = ?
+    ORDER BY links.link_id DESC
+"""
+
+    search_result = db.execute(sql_query, search_query,search_query, user_id)
+
+    if len(search_query) > 5:
+        sql_query = """
+        SELECT links.title_name, links.folder_category, REPLACE(title_name, ' ', '-') AS title_path
+        FROM links
+        JOIN folders ON folders.folder_id = links.folder_id
+        JOIN users ON folders.user_id = users.user_id
+        WHERE (title_name LIKE '%' || ? || '%' OR description  LIKE '%' || ? || '%') AND users.user_id = ? ORDER BY links.link_id DESC
+        """
+        search_result = db.execute(sql_query, search_query, search_query,user_id)
+
     newest_folders = db.execute("SELECT folders.folder_name, src_img.src_id FROM folders JOIN src_img ON folders.folder_category_id = src_img.src_id WHERE user_id = ? ORDER BY folder_id DESC", user_id)
     
     count_post = db.execute("SELECT COUNT(links.title_name) AS count FROM links JOIN folders  ON links.folder_id = folders.folder_id WHERE folders.user_id = ?", user_id)[0]['count']
