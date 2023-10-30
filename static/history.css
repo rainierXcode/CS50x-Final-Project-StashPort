@@ -80,8 +80,32 @@ body{
 
 @media (max-width: 768px) {
     .article-history{
-        margin-left: 70px;
+        margin-left: 10px;
         margin-right: 10px;
         box-sizing: border-box;
     }
+
+    .searchInput{
+        display: none;
+    }
+
+    .history-sidebar{
+        z-index: 2;
+        margin-top: 0;
+    }
+
+    .nav-profile{
+        display: none;
+    }
+
+    .history-text, .history-time{
+        font-size: .9rem;
+    }
+
+    .history-time{
+        text-align: center;
+    }
+    
+
+    
   }

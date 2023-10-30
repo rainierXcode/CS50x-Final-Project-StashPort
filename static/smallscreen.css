@@ -1,0 +1,17 @@
+
+@media (max-width: 768px) {
+
+.searchInput input{
+    display: none;
+    width: 90%;
+}
+
+.nav-profile-extend-box div{
+    display: none;
+}
+
+.unclickable{
+    pointer-events: none;
+}
+
+}

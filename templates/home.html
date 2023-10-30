@@ -23,7 +23,7 @@
       <header class="header">
         <form class="header-top" action="/search" method="GET">
           <label for="search" class="material-symbols-outlined"> search </label>
-          <input type="text" class="search" name="q" id="search" autocomplete="off" />
+          <input type="text" class="search" name="q" id="search" autocomplete="off" placeholder="Search" />
         </form>
         <div class="header-down">
           <div class="header-down-left">
@@ -49,7 +49,7 @@
         </button>
 
         <ul >
-          <a href="/home">
+          <a href="/home" class="current_path">
             <li class="icon-dash">
               <i class="material-symbols-outlined">Home</i>
               <div class="dash-text">Home</div>
@@ -138,13 +138,13 @@
        {% for avatar_path in all_avatar_path %}
 
        {% if avatar_path['avatarPath'] == current_avatar %}
-       <img src="{{ url_for('static', filename='avatars/' ~ avatar_path['avatarPath']) }}" alt="icon" data-avatar="{{avatar_path['avatarPath']}}" class="current_avatar" style="pointer-events: none;">
+       <img src="{{ url_for('static', filename='avatars/' ~ avatar_path['avatarPath']) }}" alt="icon" data-avatar="{{avatar_path['avatarPath']}}" class="current_avatar" >
        <input type="hidden" id="current_avatar" name="current_avatar" value="{{avatar_path['avatarName']}}">
        {% else %}
        <img src="{{ url_for('static', filename='avatars/' ~ avatar_path['avatarPath']) }}" alt="icon" data-avatar="{{avatar_path['avatarPath']}}">
        {% endif %}
       {% endfor %}
-       <input type="hidden" id="selected_avatar" name="selected_avatar" value="">
+       <input type="hidden" id="selected_avatar" name="selected_avatar" value="{{current_avatar}}">
    
 
        <hr>

@@ -523,4 +523,49 @@
     .main-post-form {
         width: 95%;
     }
+
+    .searchInput input{
+        height: 24px;
+    }
+
+    .nav{
+        padding: 0 10px 0 10px;
+    }
+
+    .main-post-description-textbox textarea{
+        font-size: .8rem;
+    }
+
+    .main-post-title{
+        font-size: 1.3rem;
+    }
+
+    .main-post-description-text{
+        font-size: 1.2rem;
+    }
+
+    .article{
+        box-sizing: border-box;
+    }
+
+    .main-post{
+        height: calc(100vh - --nav_height);
+        box-sizing: border-box;
+    }
+
+    .main-post-form{
+        transform: translate(-50%, 0%);
+    }
+
+    .main-post-form{
+        width: 100%;
+    }
+
+    .links input, .tagArea{
+        width: 100%;
+    }
+    
+    #multiple-tags{
+        margin-bottom: 10px;
+    }
 }

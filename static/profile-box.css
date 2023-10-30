@@ -143,15 +143,13 @@ body{
   width: 80px;
 }
 
-.current_avatar{
+.current_avatar, .avatargrid img.current_avatar{
   border: 3px solid cyan;
   border-radius: 100%;
+  box-sizing: border-box;
 }
 
-.avatargrid img:hover{
-  border: 2px solid gold;
-  border-radius: 100%;
-}
+
 
 .pick-avatar-header div:nth-child(2){
   font-size: 22px;
@@ -178,5 +176,21 @@ body{
 @media (max-width: 768px) {
   .pick-avatar{
     width: 90%;
+  }
+
+  .avatargrid img{
+    width: 50px;
+  }
+
+  .new-upload-post{
+    height: 200px;
+  }
+
+  .blurme{
+    filter: blur(3px);
+  }
+
+  .unclickable{
+    pointer-events: none;
   }
 }

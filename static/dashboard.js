@@ -9,7 +9,13 @@ const article = document.querySelector(".article");
 const iconDash = document.querySelectorAll(".icon-dash");
 const iconDashboard = document.querySelector(".icon-dashboard");
 
+const uploadForm = document.getElementById("upload");
 
+const searchIcon = document.querySelector(".header-top label");
+const searchInput = document.querySelector(".header-top input");
+
+
+let dashboardisOpen = true
 dashButton.addEventListener('click', () => {
     dashText.forEach((text) => {
         text.classList.toggle('hide');
@@ -23,6 +29,16 @@ dashButton.addEventListener('click', () => {
     article.classList.toggle('hide');
     iconDashboard.classList.toggle('hide');
 
+
+    if(dashboardisOpen){
+    searchIcon.classList.add("unclickable")
+    dashboardisOpen = false
+    }
+    else{
+        searchIcon.classList.remove("unclickable")
+        dashboardisOpen = true
+    }
+
     iconDash.forEach((icon) => {
         icon.classList.toggle('hide');
     });
@@ -31,5 +47,29 @@ dashButton.addEventListener('click', () => {
 });
 
 
-const uploadForm = document.getElementById("upload");
+
+
+
+let isNotOpen = true
+
+searchIcon.addEventListener("click", ()=>{
+    if (isNotOpen){
+        searchInput.style.display = "block"
+        searchInput.classList.toggle("expand")
+        sidebar.style.display = "none"
+        isNotOpen = false;
+    
+    }
+    else{
+        searchInput.style.display = "none"
+        sidebar.style.display = "flex"
+
+        searchInput.classList.remove("expand")
+        isNotOpen = true
+
+       
+    }
+})
+
+
 

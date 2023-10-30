@@ -177,7 +177,7 @@ def home():
 )
 
     query = """
-    SELECT links.title_name, folders.folder_name, REPLACE(links.title_name, ' ', '-') AS title_path
+    SELECT links.title_name, folders.folder_name, REPLACE(links.title_name, ' ', '_') AS title_path
     FROM links
     JOIN folders ON links.folder_id = folders.folder_id
     JOIN users ON folders.user_id = users.user_id
@@ -585,9 +585,12 @@ def viewPost(folder_name, title):
 def updateProfileInFolder(folder_name = None, title = None, search_query = None, upload=None , history = None):
     if request.method == "POST":
         avatar_select = request.form.get("selected_avatar")
+        print(avatar_select)
         username = session["user_id"]
         user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
-        db.execute("UPDATE users SET avatarID = (SELECT src_avatar.avatarID  FROM src_avatar WHERE src_avatar.avatarPath = ? ) WHERE user_id = ?", avatar_select, user_id)
+        current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN users ON src_avatar.avatarID = users.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+        if str(current_avatar_path) != str(avatar_select):
+            db.execute("UPDATE users SET avatarID = (SELECT src_avatar.avatarID  FROM src_avatar WHERE src_avatar.avatarPath = ? ) WHERE user_id = ?", avatar_select, user_id)
         if folder_name is not None and title is None:
             return redirect(url_for('folder', folder_name=folder_name))
         elif folder_name is not None and title is not None:
@@ -693,16 +696,13 @@ def history(type):
 @login_required
 def search():
 
-  
-       
-
 
     search_query = request.args.get("q")
     username = session["user_id"]
     user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
 
     sql_query = """
-    SELECT links.title_name, links.folder_category, REPLACE(title_name, ' ', '-') AS title_path
+    SELECT links.title_name, links.folder_category, REPLACE(title_name, ' ', '_') AS title_path
     FROM links
     JOIN folders ON folders.folder_id = links.folder_id
     JOIN users ON folders.user_id = users.user_id
