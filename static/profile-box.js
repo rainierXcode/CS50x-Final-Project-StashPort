@@ -108,7 +108,7 @@ if (profileClick && profileBox) {
       } else {
         profileBox.style.display = "none";
 
-        if(window.innerWidth < 768){
+        if(window.innerWidth < 768 && search != null){
             search.classList.remove("unclickable")
         }
 
@@ -203,16 +203,17 @@ avatarImg.forEach(img => {
     }
 
 
-const namePath = document.getElementById("namepath")
 
-if(namePath != null){
-if (window.innerWidth < 768 && (namePath.value == "search" || namePath.value == "folderpost") ){
+
+if (window.innerWidth < 768 ){
 
 
 const searchInput = document.querySelector(".searchInput input")
 const middleNav = document.querySelector(".middle-nav")
 const navProfile = document.querySelector(".nav-profile")
 
+
+  if(searchButton != null){
     let isButtonOpen = false
     searchButton.addEventListener("click", ()=>{
         if(!isButtonOpen){
@@ -230,6 +231,6 @@ const navProfile = document.querySelector(".nav-profile")
         }
     })
 }
-}
 
+}
 

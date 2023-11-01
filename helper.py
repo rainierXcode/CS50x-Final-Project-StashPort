@@ -126,9 +126,14 @@ def formTagComparison(prev, now):
             return False
     return True
 
-def userTitleAlreadyUse(title, category):
+def userTitleAlreadyUse(title, category, user_id):
+    count = db.execute("SELECT COUNT(links.link_id) AS count FROM links JOIN folders  ON links.folder_id = folders.folder_id WHERE folders.user_id = ?", user_id)[0]['count']
+    count = int(count)
 
-    exist = db.execute("SELECT title_name FROM links WHERE title_name = ? AND folder_category = ?", title, category)
+    if count == 0:
+        return False
+    folder_id = db.execute("SELECT folder_id FROM folders WHERE folder_name = ? AND user_id = ?", category, user_id)[0]['folder_id']
+    exist = db.execute("SELECT title_name FROM links WHERE title_name = ? AND folder_id = ?", title, folder_id)
     if len(exist) > 0:
         return True
     return False
@@ -161,6 +166,64 @@ def removeDuplicateList(list_):
         if l not in temp_list:
             temp_list.append(l)
     return temp_list
+
+def uploadReadError(folder_choice, title, link, description, tags, user_id, current_title):
+    all_error = []
+    if folder_choice == None:
+        error_message_folder = "Collections named is not available"
+        all_error.append(error_message_folder)
+
+    elif '_' in folder_choice:
+        error_message_folder = "Using an underscore in Category is prohibited."
+        all_error.append(error_message_folder)
+    
+
+    if title == "":
+        error_message_title = "Title cannot be empty"
+        all_error.append(error_message_title)
+    
+    elif '_' in title:
+        error_message_title = "Using an underscore in Title is prohibited."
+        all_error.append(error_message_title)
+
+    elif link_verifier(title):
+        error_message_title = "Title must not be an URL"
+        all_error.append(error_message_title)
+
+        
+
+    elif len(title) < 5:
+        error_message_title = "Title must be 5 characters above"
+        all_error.append(error_message_title)
+
+    elif title != current_title and userTitleAlreadyUse(title, folder_choice, user_id):
+        error_message_title = "You already used this title in this category."
+        all_error.append(error_message_title)
+    
+    if link == "":
+        error_message_link = "Link cannot be empty"
+        all_error.append(error_message_link)
+
+
+    elif not link_verifier(link):
+        error_message_link = "Your Link is Detected Invalid"
+        all_error.append(error_message_link)
+    
+
+    if description == "":
+        error_message_description = "Description cannot be empty"
+        all_error.append(error_message_description)
+
+
+    elif len(description) < 30:
+        error_message_description = "Too short, must be 30 characters above"
+        all_error.append(error_message_description)
+
+
+    if tags == tags.endswith(","):
+        error_message_tags = "Dont end with comma"
+        all_error.append(error_message_tags)
+    return all_error
 
 
 

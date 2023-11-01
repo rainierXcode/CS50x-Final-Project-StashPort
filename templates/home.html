@@ -13,11 +13,115 @@
     href="{{ url_for('static', filename='profile-box.css') }}"
   />
     <script src="../static/dashboard.js" defer></script>
+    <script src="../static/home.js" defer></script>
     <script src="{{ url_for('static', filename='profile-box.js') }}" defer></script>
     <title>Home</title>
   </head>
   <body>
 
+    <div class="add-new-folder-home-editing">
+      <form action="/home/update-category" method="POST">
+        <div>Name Your Folder</div>
+        <div>
+          <input
+            type="text"
+            autofocus
+            autocomplete="off"
+            name="folder_name_inputinEdit"
+            id = "folder_name_inputinEdit"
+            value=""
+          />
+          
+        </div>
+          <hr>
+          <div class="folder_img_choice-EDIT">
+            <div>Pick a Thumbnail</div>
+            <div class="all_folder_image-EDIT">
+             <img src="../static/folderimg/1.png" alt="categories_thumbnail" data_category_img="1.png">
+             <img src="../static/folderimg/2.png" alt="categories_thumbnail" data_category_img="2.png">
+             <img src="../static/folderimg/3.png" alt="categories_thumbnail" data_category_img="3.png">
+             <img src="../static/folderimg/4.png" alt="categories_thumbnail" data_category_img="4.png">
+             <img src="../static/folderimg/5.png" alt="categories_thumbnail" data_category_img="5.png">
+             <img src="../static/folderimg/6.png" alt="categories_thumbnail" data_category_img="6.png">
+             <img src="../static/folderimg/7.png" alt="categories_thumbnail" data_category_img="7.png">
+             <img src="../static/folderimg/8.png" alt="categories_thumbnail" data_category_img="8.png">
+             <img src="../static/folderimg/9.png" alt="categories_thumbnail" data_category_img="9.png">
+             <img src="../static/folderimg/10.png" alt="categories_thumbnail" data_category_img="10.png">
+             <img src="../static/folderimg/11.png" alt="categories_thumbnail" data_category_img="11.png"> 
+             <img src="../static/folderimg/12.png" alt="categories_thumbnail" data_category_img="12.png">
+             <img src="../static/folderimg/13.png" alt="categories_thumbnail" data_category_img="13.png">
+             <img src="../static/folderimg/14.png" alt="categories_thumbnail" data_category_img="14.png">
+             <img src="../static/folderimg/15.png" alt="categories_thumbnail" data_category_img="15.png">
+             <img src="../static/folderimg/16.png" alt="categories_thumbnail" data_category_img="16.png">
+             <img src="../static/folderimg/17.png" alt="categories_thumbnail" data_category_img="17.png">
+            </div>
+          </div>
+          <input type="hidden" id="selected_image_edit" name="selected_image_edit" value="">
+      
+        <button id="add-new-folder-button-EDIT" class="disabled-button">
+          Add New
+        </button>
+
+        <input type="hidden" name = "folder_id" id ="folder_id" value="">
+      </form>
+      <div class="close-folder-div">
+        <button id="close-folder-form">
+          <a class="material-symbols-outlined" href="/home">close</a>
+        </button>
+      </div>
+    </div>
+
+    <div class="add-new-folder add-new-folder-home">
+      <form action="home" method="POST">
+        <div>Name Your Folder</div>
+        <div>
+          <input
+            type="text"
+            autofocus
+            autocomplete="off"
+            name="folder_name"
+            id = "folder_name_input"
+          />
+          
+        </div>
+          <hr>
+          <div class="folder_img_choice">
+            <div>Pick a Thumbnail</div>
+            <div class="all_folder_image">
+             <img src="../static/folderimg/1.png" alt="categories_thumbnail" data_category_img="1.png">
+             <img src="../static/folderimg/2.png" alt="categories_thumbnail" data_category_img="2.png">
+             <img src="../static/folderimg/3.png" alt="categories_thumbnail" data_category_img="3.png">
+             <img src="../static/folderimg/4.png" alt="categories_thumbnail" data_category_img="4.png">
+             <img src="../static/folderimg/5.png" alt="categories_thumbnail" data_category_img="5.png">
+             <img src="../static/folderimg/6.png" alt="categories_thumbnail" data_category_img="6.png">
+             <img src="../static/folderimg/7.png" alt="categories_thumbnail" data_category_img="7.png">
+             <img src="../static/folderimg/8.png" alt="categories_thumbnail" data_category_img="8.png">
+             <img src="../static/folderimg/9.png" alt="categories_thumbnail" data_category_img="9.png">
+             <img src="../static/folderimg/10.png" alt="categories_thumbnail" data_category_img="10.png">
+             <img src="../static/folderimg/11.png" alt="categories_thumbnail" data_category_img="11.png">
+             <img src="../static/folderimg/12.png" alt="categories_thumbnail" data_category_img="12.png">
+             <img src="../static/folderimg/13.png" alt="categories_thumbnail" data_category_img="13.png">
+             <img src="../static/folderimg/14.png" alt="categories_thumbnail" data_category_img="14.png">
+             <img src="../static/folderimg/15.png" alt="categories_thumbnail" data_category_img="15.png">
+             <img src="../static/folderimg/16.png" alt="categories_thumbnail" data_category_img="16.png">
+             <img src="../static/folderimg/17.png" alt="categories_thumbnail" data_category_img="17.png">
+            </div>
+          </div>
+      
+        <button id="add-new-folder-button" class="disabled-button">
+          Add New
+        </button>
+
+        <input type="hidden" name = "latest_category" id ="latest_category" value="">
+        <input type="hidden" id="selected_image_add" name="selected_image_add" value="">
+      
+      </form>
+      <div class="close-folder-div">
+        <button id="close-folder-form">
+          <a class="material-symbols-outlined" href="/home">close</a>
+        </button>
+      </div>
+    </div>
   
     <div class="body-container">
       <header class="header">
@@ -83,41 +187,63 @@
         </ul>
       </aside>
       <article class="article">
+        
        
         {% if folder_list|length != 0 %}
         <div class="left-thumbnail" >
-          <div>Your Collections</div>
+          <div class="collections">
+            <div class="collections-text">Your Collections</div>
+            <div class="material-symbols-outlined collections-button">Add</div>
+          </div>
             <div class="thumbnail-article">
 
               {% for folder in folder_list %}
               <a class="thumbnail-box" href="/home/folder/{{folder['folder_path']}}">
-                <img src="../static/folderimg/{{ folder['src_path'] }}" alt="">
+                <div class="folder-image-box">
+                  <img src="../static/folderimg/{{ folder['src_path'] }}" alt="">
+                  <div class="folder-image-box-manipulate">
+                    <div class="material-symbols-outlined" data-category-name="{{folder['folder_name']}}" data-category-img="{{folder['src_path']}}" data-folder-id="{{ folder['folder_id'] }}">Edit</div>
+                  </div>
+                </div>
                 <div class="categories_name">{{ folder['folder_name'] }}</div>
               </a>
+              
             {% endfor %}
             </div>
           </div>
-
           {% else %}
           <div>Empty Folders</div>
           {% endif %}
 
+          {% if new_post_list|length != 0 %}
             <div class="side-content-article">
 
               <div class="new-upload-box">
                 <div class="new-upload-box-text">New Uploads</div>
-                <div class="new-upload-post">
-
+                <div class="new-upload-post"> 
                   {% for new_post in new_post_list %}
                     <div class="new-upload-post-box">
                       <a href="/home/folder/{{new_post['folder_name']}}/post/{{new_post['title_path']}}" target="_blank">{{new_post['title_name']}}</a>
                     </div>
-
-                  {% endfor %}
+                  {% endfor %}    
                 </div>
-              </div>
-              
+              </div>    
             </div>
+            {% else %}
+            <div class="side-content-article dont-display">
+
+              <div class="new-upload-box">
+                <div class="new-upload-box-text">New Uploads</div>
+                <div class="new-upload-post"> 
+                  {% for new_post in new_post_list %}
+                    <div class="new-upload-post-box">
+                      <a href="/home/folder/{{new_post['folder_name']}}/post/{{new_post['title_path']}}" >{{new_post['title_name']}}</a>
+                    </div>
+                  {% endfor %}    
+                </div>
+              </div>    
+            </div>
+          {% endif %}
             
 
       
@@ -134,7 +260,7 @@
       </div>
 
       <div  class="avatargrid">
-      <form  action="/home" method="POST">
+      <form  action="/home/update-avatar" method="POST">
        {% for avatar_path in all_avatar_path %}
 
        {% if avatar_path['avatarPath'] == current_avatar %}

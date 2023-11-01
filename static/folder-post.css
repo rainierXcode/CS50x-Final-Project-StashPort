@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Old+Permic&family=Teko&family=Vollkorn:ital@1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=PT+Serif:ital@1&family=Roboto+Condensed&display=swap&family=Playfair+Display:ital,wght@1,500');
+
+
 * {
     padding: 0;
     margin: 0;
@@ -109,6 +113,91 @@
 
 }
 
+.add-new-folder {
+    box-sizing: border-box;
+    margin: 10px;
+    background-color: #BBC7A4;
+    position: absolute;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    top: 25%;
+    left: 45%;
+    display: none;
+    z-index: 1000;
+    width: 300px;
+}
+
+.all_folder_image {
+    height: 200px;
+    overflow: auto;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    max-width: 300px;
+    grid-gap: 5px;
+}
+
+.add-new-folder form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-new-folder div:first-child {
+    font-family: 'Teko', sans-serif;
+}
+
+.add-new-folder div:nth-child(2) input {
+    border: hidden;
+    border-radius: 2px;
+    margin-bottom: 10px;
+}
+
+.add-new-folder form button {
+    padding: 3px;
+    border: hidden;
+    border-radius: 2px;
+    font-family: 'Teko', sans-serif;
+    width: 40%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.close-folder-div {
+    box-sizing: border-box;
+    padding: 0;
+    border: none;
+    height: 18px;
+    width: 18px;
+    background-color: transparent;
+    position: absolute;
+    top: 2%;
+    right: 1%;
+}
+
+.close-folder-div button, .close-folder-div button i {
+    height: 18px;
+    width: 18px;
+    font-size: 18px;
+    display: flex;
+}
+.close-folder-div button {
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: hidden;
+}
+
+.disabled-button {
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: #ccc;
+    color: #888;
+}
 
 .box-post{
     width: 100%;
@@ -277,14 +366,6 @@
     font-size: 1rem;
 }
 
-.main-post-form{
-    position: absolute;
-    top: 0px;
-    left: 50%;
-    transform: translate(-50%, 10%);
-    display: none;
-    
-}
 
 .main-post-form-close-button{
     position: absolute;
@@ -318,12 +399,7 @@
     margin-bottom: 20px;
 }
 
-.post-textbox-upload{
-    width: 80%;
-    background-color: #D4DCCD;
-    padding: 15px;
-    box-sizing: border-box;
-}
+
 
 .title-area input{
     width: 100%;
@@ -497,10 +573,139 @@
   }
 
   
+.all_error_post{
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    background-color: #8877;
+    width: 30%;
+    padding-bottom: 20px;
+    border-radius: 5px;
+    z-index: 1000;
+    transform: translateX(-50%);
+    animation: fadeIn 0.5s ease forwards;
+  
+}
 
+.all_error_post div:first-child{
+    padding: 0 20px 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Playfair Display', serif;
+    color: red;
+}
+.all_error_post-header div:first-child {
+    margin-top: 5px;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.all_error_post-header div:nth-child(2){
+    position: absolute;
+    top: 1%;
+    right: 1%;
+    width: 20px;
+    height: 20px;
+}
+.all_error_post-header div:nth-child(2) i {
+    font-size: 20px;
+}
+.all_error_post-header div:nth-child(2) button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: hidden;
+}
+.all-errors-guide{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto Condensed', sans-serif;
+    margin-bottom: 5px;
+}
+
+.all_folder_image img {
+    width: 80px;
+}
+
+#close-folder-form a{
+    text-decoration: none;
+    color: #000;
+    font-variation-settings: 'FILL' 0,
+    'wght' 300,
+    'GRAD' 1,
+    'opsz' 50
+}
+
+.folder-dropdown select { 
+    white-space: nowrap;
+    overflow: hidden;
+ }
+
+ .select{
+    border: 3px solid gold;
+ }
+ 
+
+
+
+.main-post-form{
+  position: relative;
+}
+
+.post-textbox-upload{
+    width: 100%;
+    height: calc(100vh - 120px);
+    display: none;
+    background-color: #D4DCCD;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.description-textbox textarea{
+    height: 330px;
+    margin-bottom: 30px;
+}
 
   @media (max-width: 768px) {
 
+    .description-textbox textarea{
+        height: 300px;
+    }
+    .post-textbox-upload{
+        height: calc(100vh - 70px);
+    }
+    .add-new-folder div:nth-child(2) input {
+        width: calc(100vw - 60px);
+        height: 25px;
+    }
+
+    .all_folder_image {
+        max-width: calc(100vw - 20px);
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        height: 300px;
+    }
+
+    .add-new-folder {
+        width: calc(100% - 20px);
+        box-sizing: border-box;
+        left: 0%;
+        top: 10%;
+        margin-left: 10px;
+        margin-right: 15px;
+    }
+
+    .all_folder_image img {
+        width: 100px;
+    }
+
+    .all_error_post{
+        width: 90%;
+    }
 
     .main-container-post {
         grid-template-columns: 1fr;
@@ -553,9 +758,7 @@
         box-sizing: border-box;
     }
 
-    .main-post-form{
-        transform: translate(-50%, 0%);
-    }
+
 
     .main-post-form{
         width: 100%;

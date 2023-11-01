@@ -25,10 +25,26 @@ href="{{ url_for('static', filename='smallscreen.css') }}"
   <script src="{{ url_for('static', filename='edit-main-post.js') }}" defer></script>
   <script src="{{ url_for('static', filename='folder-post.js') }}" defer></script>
   <script src="{{ url_for('static', filename='profile-box.js') }}" defer></script>
-
+  <script src="{{ url_for('static', filename='post-edit.js') }}" defer></script>
     <title>Post</title>
   </head>
   <body>
+   
+    {% if all_errors %}
+    <div class="all_error_post">
+      <div class="all_error_post-header">
+        <div>Oops! Something went wrong</div>
+        <div>
+          <button><i class="material-symbols-outlined">close</i></button>
+        </div>
+      </div>
+      {% for error in all_errors %}
+      <div class="all-errors-guide">{{error}}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+
     <div class="main-container-post">
     <nav class="nav">
       <form class="searchInput" action="/search" method="GET">
@@ -127,84 +143,82 @@ href="{{ url_for('static', filename='smallscreen.css') }}"
                     <textarea name="main-post-textarea" id="main-post-textarea" cols="100" rows="20" readonly style="resize: none;">{{post_contents['description']}}</textarea>
                 </div>
             </div>
-            
-            <form class="post-textbox-upload main-post-form"  method="POST">
-                <button class="main-post-form-close-button" >
-                    <i class="material-symbols-outlined">close</i>
-                </button>
-
-                <div class="title-area">
-                  <div class="folder-dropdown">
-                    <select name="folders" id="folders">
-                      <option disabled selected>Collections</option>
-                      {% for folder in folders %}
-                      {% if folder == folder_name %}
-                      <option value="{{folder}}" selected>{{folder}}</option>
-                      {%else %}
-                      <option value="{{folder}}">{{folder}}</option>
-                      {% endif %}
-                      {% endfor %}
-                      <option value="createnew">Create New</option>
-                    </select>
-                  </div>
-      
-                  <div class="title-input">
-                    <input
-                      type="text"
-                      name="title"
-                      autocomplete="off"
-                      autofocus
-                      placeholder="Use Appropiate Title"
-                      id="title"
-                      value="{{title_name}}"
-                    />
-                  </div>
-                </div>
-      
-                <div class="links">
-                  <input
-                    type="text"
-                    name="link"
-                    id="link"
-                    placeholder="Link"
-                    value="{{post_contents['link_url']}}"
-                    autocomplete="off"
-                  />
-                </div>
-      
-                <div class="description-textbox">
-                  <textarea name="description" id="description" cols="10" rows="10" autofocus style="resize: none">{{post_contents['description']}}</textarea>
-              </div>
-              
-      
-                <div class="tagArea">
-                  <div>Tags</div>
-                  <div>
-                    <div>
-                      <input
-                        type="text"
-                        name="tags"
-                        autocomplete="off"
-                        autofocus
-                        autocapitalize="on"
-                        value="{{tag_separation}}"
-                        id= "tags"
-                      />
-                    </div>
-                    <div id="multiple-tags">
-                      Multiple tags may be seperated by commas
-                    </div>
-                  </div>
-                </div>
-      
-                <div class="post-link-button">
-                  <button>
-                    <i class="material-symbols-outlined">post_add</i>
-                    <div>Change</div>
-                  </button>
-                </div>
-              </form>
         </div>
+        <form class="post-textbox-upload main-post-form"  method="POST">
+          <button class="main-post-form-close-button" >
+              <i class="material-symbols-outlined">close</i>
+          </button>
+
+          <div class="title-area">
+            <div class="folder-dropdown">
+              <select name="folders" id="folders">
+                <option disabled selected>Collections</option>
+                {% for folder in folders %}
+                {% if folder == folder_name %}
+                <option value="{{folder}}" selected>{{folder}}</option>
+                {%else %}
+                <option value="{{folder}}">{{folder}}</option>
+                {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="title-input">
+              <input
+                type="text"
+                name="title"
+                autocomplete="off"
+                autofocus
+                placeholder="Use Appropiate Title"
+                id="title"
+                value="{{title_name}}"
+              />
+            </div>
+          </div>
+
+          <div class="links">
+            <input
+              type="text"
+              name="link"
+              id="link"
+              placeholder="Link"
+              value="{{post_contents['link_url']}}"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="description-textbox">
+            <textarea name="description" id="description" cols="10" rows="10" autofocus style="resize: none">{{post_contents['description']}}</textarea>
+        </div>
+        
+
+          <div class="tagArea">
+            <div>Tags</div>
+            <div>
+              <div>
+                <input
+                  type="text"
+                  name="tags"
+                  autocomplete="off"
+                  autofocus
+                  autocapitalize="on"
+                  value="{{tag_separation}}"
+                  id= "tags"
+                />
+              </div>
+              <div id="multiple-tags">
+                Multiple tags may be seperated by commas
+              </div>
+            </div>
+          </div>
+
+          <div class="post-link-button">
+            <button>
+              <i class="material-symbols-outlined">post_add</i>
+              <div>Change</div>
+            </button>
+          </div>
+        </form>
     </article>
 
     <div class="pick-avatar">
@@ -237,6 +251,6 @@ href="{{ url_for('static', filename='smallscreen.css') }}"
    
   </div>
   </div>
- 
+
   </body>
 </html>
