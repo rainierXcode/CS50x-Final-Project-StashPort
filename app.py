@@ -218,6 +218,13 @@ def updateCategory():
         new_name = request.form.get("folder_name_inputinEdit")
         folder_id = int(request.form.get("folder_id"))
 
+        old_name = db.execute("SELECT folder_name FROM folders WHERE folder_id = ?", folder_id)[0]['folder_name']
+        date = database_date_format(getDate())
+        history = f'Change category {old_name} to {new_name}'
+        history_type = "ACCOUNT"
+        time = getTime()
+        db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history, user_id, history_type, time)
+
         category_id = db.execute("SELECT src_id FROM src_img WHERE src_path = ?", selected_img)[0]['src_id']
         db.execute("UPDATE folders SET folder_category_id = ?, folder_name =  ? WHERE user_id = ? AND folder_id = ?", category_id, new_name, user_id, folder_id)
         return redirect("/home")
@@ -564,10 +571,14 @@ def viewPost(folder_name, title):
 def updateProfileInFolder(folder_name = None, title = None, search_query = None, upload=None , history = None):
     if request.method == "POST":
         avatar_select = request.form.get("selected_avatar")
-        print(avatar_select)
         username = session["user_id"]
         user_id = db.execute("SELECT user_id FROM users WHERE username = ?", username)[0]["user_id"]
         current_avatar_path = db.execute("SELECT src_avatar.avatarPath FROM src_avatar JOIN users ON src_avatar.avatarID = users.avatarID WHERE users.user_id = ?", user_id)[0]['avatarPath']
+        date = database_date_format(getDate())
+        history_ = f'Avatar Updated'
+        history_type = "ACCOUNT"
+        time = getTime()
+        db.execute("INSERT INTO user_history(date, history, user_id, history_type, time) VALUES(?, ?, ?, ?, ?)", date, history_, user_id, history_type, time)
         if str(current_avatar_path) != str(avatar_select):
             db.execute("UPDATE users SET avatarID = (SELECT src_avatar.avatarID  FROM src_avatar WHERE src_avatar.avatarPath = ? ) WHERE user_id = ?", avatar_select, user_id)
         if folder_name is not None and title is None:
@@ -626,7 +637,7 @@ def history(type):
     history_content = ['post', 'categories', 'account']
 
     if str(type) == "account":
-        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC, history_id DESC", user_id, str(type).upper())
+        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, history_id DESC", user_id, str(type).upper())
         for record in records:
             history = record['history']
             time = record['time']
@@ -641,7 +652,7 @@ def history(type):
         return render_template("history.html",history = history,history_content = history_content, username = username,organized_history = organized_history, count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
     
     elif str(type) == "categories":
-        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC, history_id DESC", user_id, str(type).upper())
+        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, history_id DESC", user_id, str(type).upper())
         for record in records:
             history = record['history']
             time = record['time']
@@ -656,7 +667,7 @@ def history(type):
         return render_template("history.html",history = history,history_content = history_content,username = username, organized_history = organized_history,count_post = count_post, count_categories = count_categories, all_avatar_path = all_avatar_path, current_avatar = current_avatar, current_avatar_path = current_avatar_path)
     
     elif str(type) == "post":
-        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, time DESC, history_id DESC", user_id, str(type).upper())
+        records = db.execute("SELECT date, time, history FROM user_history WHERE user_id = ? AND history_type = ? ORDER BY date DESC, history_id DESC", user_id, str(type).upper())
         for record in records:
             history = record['history']
             time = record['time']
