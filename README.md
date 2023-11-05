@@ -22,7 +22,8 @@
     * The content of a post can be edited at any time.
     * **Title, link, and description cannot be empty**
 ### Documentations:
-![video documentation] (Documentation/documentation.gif)
+![video documentation](Documentation/documentation.gif)
+
 ## :movie_camera:Youtube:
 [Watch my video on Youtube](https://youtu.be/mRK9H31zji8?si=kwr2Rd04FB9gh_9F)
 ## Limitations:
